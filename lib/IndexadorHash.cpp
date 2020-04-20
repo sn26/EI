@@ -4,6 +4,22 @@
 #include <sys/stat.h> 
 #include <sys/types.h> 
 
+//Será privado porque no se permitirá al usuario usarlo
+IndexadorHash::IndexadorHash(){
+    this->pregunta=""; 
+    this->tok = Tokenizador();         
+    this->tok.CasosEspeciales(false);
+    this->tok.DelimitadoresPalabra(" "); 
+    this->ficheroStopWords="";
+    this->directorioIndice="./";//Lo guardaremos en el mismo directorio que donde tenemos creadas las cosas 
+    this->tipoStemmer= 0; 
+    this->almacenarEnDisco=false; 
+    this->almacenarPosTerm=false;
+    this->indice.clear(); 
+    this->indiceDocs.clear(); 
+    this->indicePregunta.clear(); 
+}
+
 //M?TODO PARA ESCRIBIR EN EL FICHERO
 bool IndexadorHash::WriteStopWords() const {
     std::string buffer;
@@ -44,7 +60,47 @@ void IndexadorHash::ReadStopWords(){
     file.close();
 }
 
+IndexadorHash::~IndexadorHash(){ 
+    this->indice.clear(); this->indiceDocs.clear(); this->indicePregunta.clear(); 
+    this->informacionColeccionDocs.~InfColeccionDocs(); 
+    this->pregunta.clear(); this->pregunta= ""; 
+    this->infPregunta.~InformacionPregunta();
+    this->stopWords.clear(); 
+    this->ficheroStopWords.clear(); this->ficheroStopWords="";
+    this->directorioIndice.clear(); this->directorioIndice="";
+    this->tok.~Tokenizador(); 
+    this->tipoStemmer = 0;
+    this->almacenarEnDisco = false ; 
+    this->almacenarPosTerm= false; ;
+}
 
+bool IndexadorHash::RecuperarIndexacion (const string& directorioIndexacion){
+    (*this) = IndexadorHash(directorioIndexacion); //Llamaremos al constructor, que ya es el que de por sí hace todo lo que debería hacer esto
+    return true;
+}
+
+
+IndexadorHash & IndexadorHash::operator=(const IndexadorHash& copia ){
+    this->indice = copia.indice;
+    this->indiceDocs = copia.indiceDocs; 
+    this->informacionColeccionDocs = copia.informacionColeccionDocs; 
+    this->pregunta = copia.pregunta;
+    this->indicePregunta = copia.indicePregunta; 
+    this->infPregunta = copia.infPregunta; 
+    this->stopWords = copia.stopWords; 
+    this->ficheroStopWords= copia.ficheroStopWords; 
+    this->directorioIndice = copia.directorioIndice; 
+    this->tok = copia.tok; 
+    this->tipoStemmer = copia.tipoStemmer;
+    this->almacenarEnDisco = copia.almacenarEnDisco; 
+    this->almacenarPosTerm = copia.almacenarPosTerm;
+    return *this;
+}
+
+//CONSTRUCTOR DE COPIA
+IndexadorHash::IndexadorHash(const IndexadorHash& copia ){
+    (*this) = copia;
+}
 
 /**
  * Constructor de la clase
@@ -486,3 +542,11 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
     } 
     
 }
+
+
+
+
+
+
+
+

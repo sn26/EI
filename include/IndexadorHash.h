@@ -19,17 +19,18 @@ class IndexadorHash {
 
     public: 
         IndexadorHash(const string& fichStopWords, const string& delimitadores, const bool& detectComp, const bool& minuscSinAcentos, 
-        const string& dirIndice, const int& tStemmer, const bool& almEnDisco, const bool& almPosTerm);
-        IndexadorHash(const string& directorioIndexacion); 
-        IndexadorHash(const IndexadorHash&); 
-        ~IndexadorHash();
-        IndexadorHash& operator= (const IndexadorHash&); 
+        const string& dirIndice, const int& tStemmer, const bool& almEnDisco, const bool& almPosTerm); //HECHO
+        IndexadorHash(const string& directorioIndexacion);  //HECHO
+        IndexadorHash(const IndexadorHash&); //HECHO 
+        ~IndexadorHash(); //HECHO
+        IndexadorHash& operator= (const IndexadorHash&); //HECHO
         bool Indexar(const string& ficheroDocumentos); 
         bool IndexarDirectorio(const string& dirAIndexar); 
-        bool GuardarIndexacion() const; 
+        bool GuardarIndexacion() const; //HECHO
         bool RecuperarIndexacion (const string& directorioIndexacion);
         void ImprimirIndexacion() const {
             cout << "Terminos indexados: " << endl;
+            //HABRÁ QUE RECORRER CADA UNO DE LOS TÉRMINOS
             //cout << termino << '\t' << InformacionTermino << endl;
             cout << "Documentos indexados: " << endl;
             //cout << nomDoc << '\t' << InfDoc << endl;
@@ -73,11 +74,10 @@ class IndexadorHash {
 
 
         private: 
-            
-            bool ReadPrivValuesMaps();
-            bool ReadPrivValues1(); 
-            bool WriteStopWords() const ; //Método para escribir en el fichero
-            void ReadStopWords( ); //Método para leer las palabras de parada del fichero
+            bool ReadPrivValuesMaps(); //HECHO
+            bool ReadPrivValues1(); //HECHO
+            bool WriteStopWords() const ; //Método para escribir en el fichero HECHO 
+            void ReadStopWords( ); //Método para leer las palabras de parada del fichero HECHO
             IndexadorHash(); // Este constructor se pone en la parte privada porque no se permitirá crear un indexador sin inicializarlo convenientemente. La inicialización la decidirá el alumno
             unordered_map<string, InformacionTermino> indice; // Índice de términos indexados accesible por el término
             unordered_map<string, InfDoc> indiceDocs; // Índice de documentos indexados accesible por el nombre del documento
