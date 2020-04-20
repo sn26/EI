@@ -4,7 +4,7 @@
 #include <sys/stat.h> 
 #include <sys/types.h> 
 
-//Será privado porque no se permitirá al usuario usarlo
+//Ser? privado porque no se permitir? al usuario usarlo
 IndexadorHash::IndexadorHash(){
     this->pregunta=""; 
     this->tok = Tokenizador();         
@@ -75,7 +75,7 @@ IndexadorHash::~IndexadorHash(){
 }
 
 bool IndexadorHash::RecuperarIndexacion (const string& directorioIndexacion){
-    (*this) = IndexadorHash(directorioIndexacion); //Llamaremos al constructor, que ya es el que de por sí hace todo lo que debería hacer esto
+    (*this) = IndexadorHash(directorioIndexacion); //Llamaremos al constructor, que ya es el que de por s? hace todo lo que deber?a hacer esto
     return true;
 }
 
@@ -543,6 +543,48 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
     
 }
 
+bool IndexadorHash::Existe(const string& word) const{//Tendremos que aplicar el stemmer a la plabra y luego buscarla 
+
+
+}
+
+/**
+ * M?todo para indexar documentos
+ * 
+ * */
+bool IndexadorHash::Indexar(const string& ficheroDocumentos){
+    //Lo primero que haremos ser? abrir el documentos para poder ir leyendo
+    ifstream file;
+    string cadena;
+    file.open(ficheroDocumentos.c_str());
+    if(!file) {
+        cerr << "ERROR: No existe el archivo: ficheroDocumentos"<< endl; return false; 
+    }
+    std::string buffer;
+    std::ifstream f(ficheroDocumentos.c_str());
+    std::string to; 
+    std::string p; 
+    p.clear();
+    p= "";
+    //vamos a configurar el tokenizador para sperar cada una de las dos cosas que componen el mapa
+    tok.DelimitadoresPalabra("\t ");//Para tokenizar los indices
+	tok.CasosEspeciales(false);
+	tok.PasarAminuscSinAcentos(false);
+    list<string> res; 
+    while(std::getline(f,to,'\n')){ //RECORREREMSO CADA UNA DE LAS L?NEAS
+        //COSAS A TENER EN CUENTA
+        /**
+         * 1.
+         * 
+         * */
+    
+    }
+
+
+}
+
+
+ int IndexadorHash::DevolverTipoStemming () const{ return this->tipoStemmer;}
 
 
 

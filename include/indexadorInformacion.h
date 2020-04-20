@@ -18,20 +18,20 @@ class InfTermDoc {
         InfTermDoc (); // Inicializa ft = 0
         ~InfTermDoc (); // Pone ft = 0
         InfTermDoc & operator= (const InfTermDoc &);
-        //Métodos para gestionar la parte privada
+        //M?todos para gestionar la parte privada
         const list<int>& getPosTerm();
 		void setPosTerm(const list<int>&);
         const int getFt(); 
         void setFt(const int & );
     private:
-        int ft; // Frecuencia del término en el documento
+        int ft; // Frecuencia del t?rmino en el documento
         list<int> posTerm;
         
 };
 ostream& operator<<(ostream& s, const InfTermDoc& p){
     s << "ft: " << p.ft;
-    // A continuación se mostrarían todos los elementos de p.posTerm (?posicion
-    //TAB posicion TAB ... posicion, es decir nunca finalizará en un TAB?): s <<
+    // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
+    //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
     //?\t? << posicion; 
     InfTermDoc p2 = p; 
     for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
@@ -48,9 +48,9 @@ class InformacionTermino {
         InformacionTermino (const InformacionTermino &);
         InformacionTermino(const int& fft, const int& ffd);
         InformacionTermino (); // Inicializa ftc = 0
-        ~InformacionTermino (); // Pone ftc = 0 y vacía l_docs
+        ~InformacionTermino (); // Pone ftc = 0 y vac?a l_docs
         InformacionTermino & operator= (const InformacionTermino &);
-        //MÉTODOS PARA MANEJAR LA PARTE PRIVADA DE LA CLASE
+        //M?TODOS PARA MANEJAR LA PARTE PRIVADA DE LA CLASE
         const int getFtc(); 
         void setFtc(const int&); 
         const int getFt(); 
@@ -61,16 +61,16 @@ class InformacionTermino {
         unordered_map<long int , InfTermDoc>& getL_docs();             
     private:
         int ft;
-        int ftc; // Frecuencia total del término en la colección
+        int ftc; // Frecuencia total del t?rmino en la colecci?n
         int fd; 
         unordered_map<long int, InfTermDoc> l_docs;
-// Tabla Hash que se accederá por el id del documento, devolviendo unobjeto de la clase InfTermDoc que contiene toda la información de  aparición del término en el documento
+// Tabla Hash que se acceder? por el id del documento, devolviendo unobjeto de la clase InfTermDoc que contiene toda la informaci?n de  aparici?n del t?rmino en el documento
 };
 
 ostream& operator<<(ostream& s, const InformacionTermino& p) {
 
     s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs.size();
-    // A continuación se mostrarían todos los elementos de p.l_docs: s <<?\tId.Doc: ? << idDoc << ?\t? << InfTermDoc;   
+    // A continuaci?n se mostrar?an todos los elementos de p.l_docs: s <<?\tId.Doc: ? << idDoc << ?\t? << InfTermDoc;   
     for ( auto it = p.l_docs.begin(); it != p.l_docs.end(); ++it ){
         s <<"\tId.Doc: " << it->first << "\t" << it->second;  
     }
@@ -128,7 +128,7 @@ class InfDoc {
         InfDoc ();
         ~InfDoc ();
         InfDoc & operator= (const InfDoc &);
-        //MÉTODOS PARA GESTIONAR LA CLASE PRIVADA
+        //M?TODOS PARA GESTIONAR LA CLASE PRIVADA
         const long int getIdDoc();
 		void setIdDoc(const long int &) ;
         const int getNumPal();
@@ -143,10 +143,10 @@ class InfDoc {
 		void setFechaModificacion(const Fecha& fechaModificacion);
     private:
         long int idDoc;
-        int numPal; // Nº total de palabras del documento
-        int numPalSinParada; // Nº total de palabras sin stop-words del documento
+        int numPal; // N? total de palabras del documento
+        int numPalSinParada; // N? total de palabras sin stop-words del documento
         int numPalDiferentes;
-        int tamBytes; // Tamaño en bytes del documento
+        int tamBytes; // Tama?o en bytes del documento
         Fecha fechaModificacion;
 };
 
@@ -183,11 +183,11 @@ class InfColeccionDocs {
 		long int getTamBytes() const;
 		void setTamBytes(const long int & tamBytes);
     private:
-        long int numDocs; // Nº total de documentos en la colección
-        long int numTotalPal; // Nº total de palabras en la colección
-        long int numTotalPalSinParada; // Nº total de palabras sin stop-words en la colección   
-        long int numTotalPalDiferentes; // Nº total de palabras diferentes en la colección que no sean stopwords (sin acumular la frecuencia de cada una de ellas)
-        long int tamBytes; // Tamaño total en bytes de la colección
+        long int numDocs; // N? total de documentos en la colecci?n
+        long int numTotalPal; // N? total de palabras en la colecci?n
+        long int numTotalPalSinParada; // N? total de palabras sin stop-words en la colecci?n   
+        long int numTotalPalDiferentes; // N? total de palabras diferentes en la colecci?n que no sean stopwords (sin acumular la frecuencia de cada una de ellas)
+        long int tamBytes; // Tama?o total en bytes de la colecci?n
 };
 ostream& operator<<(ostream& s, const InfColeccionDocs& p){
     s << "numDocs: " << p.numDocs << "\tnumTotalPal: " << p.numTotalPal <<
@@ -205,20 +205,20 @@ class InformacionTerminoPregunta {
         InformacionTerminoPregunta ();
         ~InformacionTerminoPregunta ();
         InformacionTerminoPregunta & operator= (const InformacionTerminoPregunta&);
-        //MÉTODOS AÑADIDOS PARA GESTIONAR LA CLASE PRIVADA
+        //M?TODOS A?ADIDOS PARA GESTIONAR LA CLASE PRIVADA
         const int getFt(); 
         void setFt(const int &);
         const list<int>& getPosTerm();
 		void setPosTerm(const list<int>& posTerm);
 
     private:
-        int ft; // Frecuencia total del término en la pregunta
-        list<int> posTerm;// Solo se almacenará esta información si el campo privado del indexador almacenarPosTerm == true
+        int ft; // Frecuencia total del t?rmino en la pregunta
+        list<int> posTerm;// Solo se almacenar? esta informaci?n si el campo privado del indexador almacenarPosTerm == true
 };
 ostream& operator<<(ostream& s, const InformacionTerminoPregunta& p) {
     s << "ft: " << p.ft;
-    // A continuación se mostrarían todos los elementos de p.posTerm (?posicion
-    //TAB posicion TAB ... posicion, es decir nunca finalizará en un TAB?): s <<
+    // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
+    //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
     //?\t? << posicion; 
     InformacionTerminoPregunta p2 = p; 
     for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
@@ -236,7 +236,7 @@ class InformacionPregunta {
         ~InformacionPregunta ();
         InformacionPregunta & operator= (const InformacionPregunta &);
         
-        //Métodos de gestión parte privadad
+        //M?todos de gesti?n parte privadad
         long int getNumTotalPal()const ; 
         void setNumTotalPal(const long int & ); 
         long int getNumTotalPalSinParada() const; 
@@ -245,11 +245,11 @@ class InformacionPregunta {
         void setNumTotalPalDiferentes(const long int &);
     private:
         long int numTotalPal;
-        // Nº total de palabras en la pregunta
+        // N? total de palabras en la pregunta
         long int numTotalPalSinParada;
-        // Nº total de palabras sin stop-words en la pregunta
+        // N? total de palabras sin stop-words en la pregunta
         long int numTotalPalDiferentes;
-        // Nº total de palabras diferentes en la pregunta que no sean stop-words (sin acumular la frecuencia de cada una de ellas)
+        // N? total de palabras diferentes en la pregunta que no sean stop-words (sin acumular la frecuencia de cada una de ellas)
 };
 ostream& operator<<(ostream& s, const InformacionPregunta& p){
     s << "numTotalPal: " << p.numTotalPal << "\tnumTotalPalSinParada: "<<

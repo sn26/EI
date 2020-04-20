@@ -31,7 +31,7 @@ Tokenizador::~Tokenizador() {
 
 //Recorreremos el string y sacaremos los que hay repetidos 
 //filtrando que no se introduzcan delimitadores repetidos (de izquierda a derecha, en cuyo
-//caso se eliminar�an los que hayan sido repetidos por la derecha);
+//caso se eliminar?an los que hayan sido repetidos por la derecha);
 void Tokenizador::filtrarRepetidos(const string& delimitadoresPalabra ){
     //Para filtrar los repetidos lo que vamos a hacer es recorrer cada una de las casillas del string
     for(int i = 0 ; i<delimitadoresPalabra.length() ; i++){
@@ -63,21 +63,21 @@ Tokenizador& Tokenizador::operator= (const Tokenizador& tokenizer) {
     return *this; 
 }
 
-//M�TODO PARA PASAR A MIN�SCULAS
+//M?TODO PARA PASAR A MIN?SCULAS
 string Tokenizador::pasarMinSin( string& cadena ) const{
     int caracter= 0;
     for(int i=0 ; i<cadena.length() ; i++){
-        //Cambiaremos cada uno de los car�cteres a entero
+        //Cambiaremos cada uno de los car?cteres a entero
         caracter = (int) cadena[i];
         if( caracter <0 ) { 
-            //Si es <0, entonces lo que haremos ser� compararlo con cada uno de los casos
+            //Si es <0, entonces lo que haremos ser? compararlo con cada uno de los casos
             caracter = caracter+ 256;
             if(caracter==224 || caracter == 225 || caracter== 192 || caracter== 193) cadena[i] = (char)97; //a
             if(caracter==232 || caracter==233 || caracter==201 || caracter==200)  cadena[i] =(char)101; //e
             if(caracter==237 || caracter == 236 || caracter==204 || caracter==205) cadena[i]= (char)105; //i
             if(caracter== 242 ||caracter == 243 || caracter == 210 || caracter == 211) cadena[i] = (char)111; //o
             if(caracter==250 || caracter == 249 || caracter==217 || caracter==218) cadena[i] = (char)117; //u
-            if( caracter==209 ) cadena[i] = (char)241; //�
+            if( caracter==209 ) cadena[i] = (char)241; //?
         }else{
             cadena[i] =std::tolower(cadena[i]);
         }
@@ -89,20 +89,20 @@ string Tokenizador::pasarMinSin( string& cadena ) const{
 
 
 
-//Mejorada la eficiencia del m�todo
+//Mejorada la eficiencia del m?todo
 /*string::size_type find_first_not_of(string delimiters , string::size_type pos ){
 
 
 }*/
 
-//MODIFICADO PARA HACERLO M�S EFICIENTE PARA LA SEGUNDA PR�CTICA
+//MODIFICADO PARA HACERLO M?S EFICIENTE PARA LA SEGUNDA PR?CTICA
 void Tokenizador::Tokenizar (const string& str, list<string>& tokens) const{
     
     string cadena= str; 
-    if(this->pasarAminuscSinAcentos) { //Miramos si se pide pasar a min�sculas
+    if(this->pasarAminuscSinAcentos) { //Miramos si se pide pasar a min?sculas
         cadena = this->pasarMinSin(cadena);    
     }
-    if(tokens.size()!= 0 ) tokens.clear(); //Borramos si la lista no est� vac�a
+    if(tokens.size()!= 0 ) tokens.clear(); //Borramos si la lista no est? vac?a
     string::size_type lastPos = cadena.find_first_not_of(this->delimiters,0);
     string::size_type pos = cadena.find_first_of(this->delimiters,lastPos);
     while(string::npos != pos || string::npos != lastPos)
@@ -117,7 +117,7 @@ void Tokenizador::Tokenizar (const string& str, list<string>& tokens) const{
 
 
 
-//Haremos los setters de casos especiales y pasar a min�sculas
+//Haremos los setters de casos especiales y pasar a min?sculas
 void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales){
     this->casosEspeciales = nuevoCasosEspeciales;
 }
@@ -152,7 +152,7 @@ bool Tokenizador::Tokenizar(const string& NomFichEntr, const string& NomFichSal)
         return false;
     
     }else{
-        //HACEMOS LA LECTURA M�S R�PIDA DEL ARCHIVO
+        //HACEMOS LA LECTURA M?S R?PIDA DEL ARCHIVO
         std::string buffer;
 
         std::ifstream f(NomFichEntr);
@@ -225,7 +225,7 @@ bool Tokenizador::TokenizarListaFicheros (const string& sources) const {
     buffer.resize(f.tellg());
     f.seekg(0);
     f.read(const_cast<char*> (buffer.data()), buffer.size());
-    //UNA VEZ LE�DO, SE LO PASAREMOS A NUESTRO TOKENIZADOR
+    //UNA VEZ LE?DO, SE LO PASAREMOS A NUESTRO TOKENIZADOR
     char * copia = const_cast<char*>(buffer.data());
     auto ss = std::stringstream(copia);*/
     std::string to;
@@ -254,7 +254,7 @@ bool Tokenizador::Tokenizar (const string& i) const {
 }
 
 
-//M�todo para tokenizar directorios
+//M?todo para tokenizar directorios
 bool Tokenizador::TokenizarDirectorio(const string & i ) const {
     struct stat dir; // Compruebo la existencia del directorio  
     int err=stat(i.c_str(), &dir); 

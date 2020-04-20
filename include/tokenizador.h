@@ -44,18 +44,18 @@ class Tokenizador {
 		bool PasarAminuscSinAcentos() const ; //HECHO
 	
 	private:
-		bool email(string::size_type&, const string & , list<string>&tokens, string::size_type & , string::size_type &) const; //M�todo para tokenizar los casos especiales de los emails
-		void normal(  const string& , list<string>&tokens, string::size_type & , string::size_type &) const; //M�todo para cuando no se ha realizado ning�n caso especial
-		void acronimo(const string& , const string & , list<string>&tokens, string::size_type & , string::size_type &) const; //M�todo para tokenizar casos especiales acr�nimos		
-		void guiones(const string& , const string & , list<string>&tokens, string::size_type & , string::size_type &) const; //M�todo para tokenizar cassos especiales guines
-		int numero(const string &,const string&, list<string>& tokens ,  string::size_type &  ,  string::size_type & ) const; //M�todo para tokenizar casos especiales n�meros
+		bool email(string::size_type&, const string & , list<string>&tokens, string::size_type & , string::size_type &) const; //M?todo para tokenizar los casos especiales de los emails
+		void normal(  const string& , list<string>&tokens, string::size_type & , string::size_type &) const; //M?todo para cuando no se ha realizado ning?n caso especial
+		void acronimo(const string& , const string & , list<string>&tokens, string::size_type & , string::size_type &) const; //M?todo para tokenizar casos especiales acr?nimos		
+		void guiones(const string& , const string & , list<string>&tokens, string::size_type & , string::size_type &) const; //M?todo para tokenizar cassos especiales guines
+		int numero(const string &,const string&, list<string>& tokens ,  string::size_type &  ,  string::size_type & ) const; //M?todo para tokenizar casos especiales n?meros
 		//void numeroSeguidoX(const string& cadena, list<string>& tokens ,string::size_type & lastPos  , string::size_type & pos ) const;
 		//void puntoNumero(const string& cadena, list<string>& tokens ,string::size_type & lastPos  , string::size_type & pos ) const;
-		//M�todo para gestionar los casos especiales de la url
+		//M?todo para gestionar los casos especiales de la url
 		bool url(const string&, list<string>& tokens ,  string::size_type &  ,  string::size_type &  ) const; 
-		//M�todo para filtrar los string repetidos
+		//M?todo para filtrar los string repetidos
 		void filtrarRepetidos(const string&) ; //HECHO
-		//PASAR A MIN�SCULAS M�TODO
+		//PASAR A MIN?SCULAS M?TODO
 		string pasarMinSin( string& cadena) const;  
 
 		//string cadenaEspeciales(string &cadena , const string &delimitadoresEspeciales, bool &primero  , string::size_type &lastPos , string::size_type &pos) const;
