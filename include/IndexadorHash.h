@@ -24,7 +24,7 @@ class IndexadorHash {
         IndexadorHash(const IndexadorHash&); //HECHO 
         ~IndexadorHash(); //HECHO
         IndexadorHash& operator= (const IndexadorHash&); //HECHO
-        bool Indexar(const string& ficheroDocumentos); //Método con el que vamos a coger los documentos y a indexarlos
+        bool Indexar(const string& ficheroDocumentos); //Método con el que vamos a coger los documentos y a indexarlos HECHO
         bool IndexarDirectorio(const string& dirAIndexar); 
         bool GuardarIndexacion() const; //HECHO
         bool RecuperarIndexacion (const string& directorioIndexacion); //HECHO
@@ -79,13 +79,13 @@ class IndexadorHash {
 
 
         private: 
-            bool IndexarUnDocu(const char * to , InfDoc &); //Método para indexar un documento (Lo usaremos dentro del método de indexar documentos)
-            char * pasarAMinSin(char * word) const; //PARA PASAR A MINÚSCULAS UNA PALABRA
+            bool IndexarUnDocu(const char * to , InfDoc &); //HECHO Método para indexar un documento (Lo usaremos dentro del método de indexar documentos)
+            char * pasarAMinSin(char * word) const; //HECHO PARA PASAR A MINÚSCULAS UNA PALABRA
             bool ReadPrivValuesMaps(); //HECHO
             bool ReadPrivValues1(); //HECHO
-            bool WriteStopWords() const ; //Método para escribir en el fichero HECHO 
-            void ReadStopWords( ); //Método para leer las palabras de parada del fichero HECHO
-            IndexadorHash(); // Este constructor se pone en la parte privada porque no se permitirá crear un indexador sin inicializarlo convenientemente. La inicialización la decidirá el alumno
+            bool WriteStopWords() const ; // HECHOMétodo para escribir en el fichero HECHO 
+            void ReadStopWords( ); //HECHO Método para leer las palabras de parada del fichero HECHO
+            IndexadorHash(); //HECHO Este constructor se pone en la parte privada porque no se permitirá crear un indexador sin inicializarlo convenientemente. La inicialización la decidirá el alumno
             unordered_map<string, InformacionTermino> indice; // Índice de términos indexados accesible por el término
             unordered_map<string, InfDoc> indiceDocs; // Índice de documentos indexados accesible por el nombre del documento
             InfColeccionDocs informacionColeccionDocs; // Información recogida de la colección de documentos indexada

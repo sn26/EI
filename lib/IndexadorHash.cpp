@@ -188,6 +188,7 @@ bool IndexadorHash::GuardarIndexacion() const{
         std::ofstream i(this->directorioIndice + "/PrivValues1.txt" );
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio " <<this->directorioIndice<< " el archivo de guardado del disco: PrivValues1.txt" << endl;
+            if( remove( this->ficheroStopWords.c_str() ) != 0 ) cerr<< "Error deleting file" ;
             return false;
         }
         i.write(buffer.data(), buffer.size());
@@ -211,6 +212,8 @@ bool IndexadorHash::GuardarIndexacion() const{
         i.open(this->directorioIndice + "/PrivValuesMaps.txt");
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio "<<this->directorioIndice<< " el archivo de guardado del disco: PrivValuesMaps.txt" << endl;
+            if( remove( this->ficheroStopWords.c_str() ) != 0 ) cerr<< "Error deleting file" ;
+            if( remove( "PrivValues1.txt" ) != 0 ) cerr<< "Error deleting file" ;
             return false;
         }
         i.write(buffer.data() , buffer.size()); 
@@ -577,19 +580,28 @@ char * IndexadorHash::pasarAMinSin(char * cadena) const{
 bool IndexadorHash::Existe(const string& word) const{//Tendremos que aplicar el stemmer a la plabra y luego buscarla 
     if(this->tipoStemmer == 0){
         char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
-        return (indice.find(copia) != indice.end());
+        for(auto iterator = indice.begin() ; iterator!=indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) return true; 
+        }
+        return false; 
     } 
     if(this->tipoStemmer == 1 ) { //Habrá que usar el stemmer en español
         stemmerPorter s = stemmerPorter() ;
         char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
         s.stemmer(copia , 1); 
-        return(indice.find(copia)!= indice.end());
+        for(auto iterator = indice.begin() ; iterator!=indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) return true; 
+        }
+        return false; 
     }
     if(this->tipoStemmer==2){
         stemmerPorter s = stemmerPorter() ;
         char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
         s.stemmer(copia , 2); 
-        return(indice.find(copia)!= indice.end());
+        for(auto iterator = indice.begin() ; iterator!=indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) return true; 
+        }
+        return false; 
     }
     return false;
 
@@ -609,14 +621,21 @@ bool IndexadorHash::Devuelve(const string& word, InformacionTermino& inf) const{
 }
 
 bool IndexadorHash::Inserta(const string& word, const InformacionTermino& inf){
-    if(Existe(word)){
-        return false;
-    }else {
+    if(!Existe(word)){
         std::pair<std::string , InformacionTermino> pareja (word , inf);
         this->indice.insert(pareja);
+        return true;
     }
+    return false;
 }
 
+
+
+
+/**
+ * Método que usaremos para indexar documentos
+ * 
+ * */
 bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
     struct stat propiedadesDoc; //Lo usaremos para poder sacar los valores del tamaño en bytes
     if( stat(this->directorioIndice.c_str(), &propiedadesDoc) == -1 || !S_ISDIR(propiedadesDoc.st_mode) ) {
@@ -800,7 +819,11 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
 }
 
 
- int IndexadorHash::DevolverTipoStemming () const{ return this->tipoStemmer;}
+int IndexadorHash::DevolverTipoStemming () const{ 
+    return this->tipoStemmer;
+}
+
+
 
 
 
