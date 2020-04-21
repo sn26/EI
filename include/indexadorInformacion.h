@@ -85,6 +85,9 @@ class Fecha{
 		Fecha();//Inicializa la fecha a la actual del sistema
         Fecha(tm * ltm );
         Fecha& operator= (const Fecha &);
+        bool operator==(const Fecha & ); //Para comparar si dos fechas son iguales
+        bool operator>(const Fecha & ); //Para comprobar si nuestra fecha es más actual 
+        bool operator<(const Fecha &); //Para comprobar si nuestra fecha es más antigua
         void setFecha(const int & dia , const int &  mes ,const int &  anyo , const int &  hora, const int &  min ,const int &  seg);
         const int getMes(); 
         const int getDia();

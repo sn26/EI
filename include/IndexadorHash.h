@@ -46,9 +46,14 @@ class IndexadorHash {
             cout << "Informacion de la pregunta: " << infPregunta << endl;
         
         }
-        bool Devuelve(const string& word, InformacionTermino& inf) const; 
+
+        void ImprimirPregunta(){
+            cout << "Pregunta indexada: "<< pregunta << endl; 
+            cout << "Informacion de la pregunta: " << infPregunta << endl;
+        }
+        bool Devuelve(const string& word, InformacionTermino& inf) const; //HECHO
         bool Devuelve(const string& word, const string& nomDoc, InfTermDoc& InfDoc) const; 
-        bool Existe(const string& word) const; 
+        bool Existe(const string& word) const;  //HECHO
         bool Borra(const string& word);
         bool BorraDoc(const string& nomDoc);
         void VaciarIndiceDocs(); 
@@ -74,6 +79,8 @@ class IndexadorHash {
 
 
         private: 
+            bool IndexarUnDocu(const char * to , InfDoc &); //Método para indexar un documento (Lo usaremos dentro del método de indexar documentos)
+            char * pasarAMinSin(char * word) const; //PARA PASAR A MINÚSCULAS UNA PALABRA
             bool ReadPrivValuesMaps(); //HECHO
             bool ReadPrivValues1(); //HECHO
             bool WriteStopWords() const ; //Método para escribir en el fichero HECHO 
@@ -89,14 +96,13 @@ class IndexadorHash {
             string ficheroStopWords; // Nombre del fichero que contiene las palabras de parada
             string directorioIndice;
             Tokenizador tok; 
-
             int tipoStemmer; // 0 = no se aplica stemmer: se indexa el término tal y como aparece tokenizado
             // Los siguientes valores harán que los términos a indexar se les aplique el stemmer y se almacene solo dicho stem.
             // 1 = stemmer de Porter para español
             // 2 = stemmer de Porter para inglés  
-
             bool almacenarEnDisco;
             bool almacenarPosTerm; 
+            
 
 
 

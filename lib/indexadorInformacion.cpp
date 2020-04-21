@@ -80,6 +80,43 @@ Fecha& Fecha::operator =(const Fecha &fecha){
     return *this;
 }
 
+
+bool Fecha::operator==(const Fecha & f){
+    if(this->anyo == f.anyo && this->dia == f.dia && this->mes == f.mes && this->hora == f.hora && this->min == f.min && this->hora == f.hora) return true; 
+    else return false;
+}
+
+bool Fecha::operator< (const Fecha &f ){
+    if(*this == f ) return false; 
+    if(this->anyo > f.anyo ) return false; 
+    if(this->anyo < f.anyo) return true; 
+    if(this->anyo == f.anyo) {
+        if(this->mes<f.mes ) return true;
+        if(this->mes > f.mes ) return false; 
+        if(this->mes == f.mes){
+            if(this->dia > f.dia) return false; 
+            if(this->dia < f.dia ) return true;
+            if(this->dia == f.dia ) {
+                if(this->hora > f.hora ) return false; 
+                if(this->hora < f.hora ) return true; 
+                if(this->hora == f.hora ) {
+                    if(this->min > f.min ) return false; 
+                    if(this->min < f.min ) return true; 
+                    if(this->min == f.min ) {
+                        if(this->seg> f.seg  ) return false; 
+                        if(this->seg < f.seg ) return true ; 
+                        //Nunca podrán haber llegado hasta aquí y ser iguales, porque entonces se hubiera metido en el primero caso 
+                    }
+                }
+            }
+        }
+    }
+}
+bool Fecha::operator>(const Fecha & f ) {
+    if(*this == f )return false;
+    if(*this < f ) return false; 
+    return true;  
+}
 Fecha::Fecha(const Fecha& fecha){ *this = fecha;  }
 
 Fecha::Fecha(const int& dia , const int &mes , const int &anyo, const int &hota , const int & min , const int & seg ){
@@ -92,12 +129,9 @@ Fecha::Fecha(const int& dia , const int &mes , const int &anyo, const int &hota 
 }
 
 Fecha::Fecha() {
-    this->anyo = 1975; 
-    this->mes = 1; 
-    this->dia= 1; 
-    this->hora = 00; 
-    this->min = 0; 
-    this->seg= 0; 
+    time_t now =time(0); 
+    tm *ltm = localtime(&now);
+    Fecha(ltm); //Creamos una nueva fecha con la hora local
 }
 
 Fecha::Fecha(tm * ltm ){
@@ -142,9 +176,7 @@ InfDoc::InfDoc(const InfDoc &id){
 }
 
 InfDoc::InfDoc(){
-    time_t now =time(0); 
-    tm *ltm = localtime(&now);
-    this->fechaModificacion = Fecha(ltm);
+    this->fechaModificacion =  Fecha();
     this->idDoc =  this->numPal = this->numPalDiferentes = this->numPalSinParada = 0; 
 }
 

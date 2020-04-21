@@ -543,8 +543,192 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
     
 }
 
-bool IndexadorHash::Existe(const string& word) const{//Tendremos que aplicar el stemmer a la plabra y luego buscarla 
+/**
+ * Método par apasar a minúsculas sin acentos
+ * 
+ * */
+char * IndexadorHash::pasarAMinSin(char * cadena) const{
+    int caracter= 0;
+    for(int i=0 ; i< strlen(cadena) ; i++){
+        //Cambiaremos cada uno de los car?cteres a entero
+        caracter = (int) cadena[i];
+        if( caracter <0 ) { 
+            //Si es <0, entonces lo que haremos ser? compararlo con cada uno de los casos
+            caracter = caracter+ 256;
+            if(caracter==224 || caracter == 225 || caracter== 192 || caracter== 193) cadena[i] = (char)97; //a
+            if(caracter==232 || caracter==233 || caracter==201 || caracter==200)  cadena[i] =(char)101; //e
+            if(caracter==237 || caracter == 236 || caracter==204 || caracter==205) cadena[i]= (char)105; //i
+            if(caracter== 242 ||caracter == 243 || caracter == 210 || caracter == 211) cadena[i] = (char)111; //o
+            if(caracter==250 || caracter == 249 || caracter==217 || caracter==218) cadena[i] = (char)117; //u
+            if( caracter==209 ) cadena[i] = (char)241; //?
+        }else{
+            cadena[i] =std::tolower(cadena[i]);
+        }
+    }
+    return cadena;
+}
 
+
+
+/**
+ * Método para comprobar si tenemos indexada una palabra 
+ * 
+ * */
+bool IndexadorHash::Existe(const string& word) const{//Tendremos que aplicar el stemmer a la plabra y luego buscarla 
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        return (indice.find(copia) != indice.end());
+    } 
+    if(this->tipoStemmer == 1 ) { //Habrá que usar el stemmer en español
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        return(indice.find(copia)!= indice.end());
+    }
+    if(this->tipoStemmer==2){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        s.stemmer(copia , 2); 
+        return(indice.find(copia)!= indice.end());
+    }
+    return false;
+
+}
+
+/**
+ * Cuando devolvemos el índice
+ * */ 
+bool IndexadorHash::Devuelve(const string& word, InformacionTermino& inf) const{
+    if(Existe(word)) {
+        inf= indice.find(word)->second;
+        return true; 
+    }else {
+        inf = InformacionTermino(); 
+        return false; 
+    }
+}
+
+bool IndexadorHash::Inserta(const string& word, const InformacionTermino& inf){
+    if(Existe(word)){
+        return false;
+    }else {
+        std::pair<std::string , InformacionTermino> pareja (word , inf);
+        this->indice.insert(pareja);
+    }
+}
+
+bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
+    struct stat propiedadesDoc; //Lo usaremos para poder sacar los valores del tamaño en bytes
+    if( stat(this->directorioIndice.c_str(), &propiedadesDoc) == -1 || !S_ISDIR(propiedadesDoc.st_mode) ) {
+        ifstream file; 
+        this->tok.Tokenizar(fichero); //Los tokens se habrán guardado en el fichero de salida, y será de ahí de donde los cogeremos
+        file.open(fichero+'.tk');
+        if(!file) return false; //No mostramos mensaje de error porque se supone que el archivo lo acabamos de crear  
+        std::ifstream f(fichero+'.tk');
+        std::string to; 
+        actual.setTamBytes( propiedadesDoc.st_size); //Ponemos el tamaño de los bytes
+        actual.setNumPal(0); actual.setNumPalSinParada(0); actual.setNumPalDiferentes(0); 
+        InfTermDoc elNuevo = InfTermDoc(); 
+        elNuevo.setFt(0);
+        list<string> palabrasEncontradas; 
+        palabrasEncontradas.clear();
+        //Iremos por cada token creado en el archivo
+        while(std::getline(f,to,'\n')){
+            std::list<std::string>::iterator iteradorPalabras;
+            iteradorPalabras= std::find(palabrasEncontradas.begin(), palabrasEncontradas.end(), to); //Si no estaba (SERÁ UNA PALABRA DIFERENTE)
+            if(iteradorPalabras == palabrasEncontradas.end()){
+                palabrasEncontradas.insert(iteradorPalabras, to); //Insertamos al final 
+            }
+            bool eraPalabraParada= false;
+            for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
+                if(*iterator == to){ //Hemos encontrado una stopWord
+                    //Sumaremos +1 al número de palabras que nos hemos encontrado en el documento
+                    actual.setNumPal(actual.getNumPal() + 1);
+                    
+                    eraPalabraParada = true;
+                    break;
+                }
+            }
+            if(!eraPalabraParada){ //Como no era una palabra de parada, pues miramos si estaba ya o no indexada
+                //Miramos si estaba ya indexada (Como quiero hacerlo eficiente, no utilizo la función Existe para mirar esto)
+                if(tipoStemmer == 1 ){
+                    stemmerPorter s = stemmerPorter(); 
+                    s.stemmer(to , 1); 
+                }
+                if(tipoStemmer == 2 ){
+                    stemmerPorter s = stemmerPorter(); 
+                    s.stemmer(to , 2); 
+                }
+                bool encontradoEnIndice = false; 
+                for( std::pair<std::string, InformacionTermino> iterator : this->indice){
+                    if(iterator.first == to ){ //NOS HEMOS ENCONTRADO CON EL DOCUMENTO INDEXADO 
+                        iterator.second.setFtc(iterator.second.getFtc() +1 );
+                        iterator.second.setFt(iterator.second.getFt() + 1 );
+                        elNuevo.setFt(elNuevo.getFt() + 1 );
+                        if( this->almacenarPosTerm ==true ) { //Si tenemos que almacenar las posiciones
+                            list<int> copia = elNuevo.getPosTerm(); 
+                            copia.push_back(actual.getNumPal());//Metemos el número de palabras que nos hemos encontrado
+                            elNuevo.setPosTerm(copia);
+                        }
+                        //Ahora, meteremos el par dentro del iterador
+                        std::pair<long int , InfTermDoc > añadido (actual.getIdDoc() , elNuevo); 
+                        unordered_map<long int , InfTermDoc> copia = iterator.second.getL_docs(); 
+                        copia.insert(añadido);
+                        iterator.second.setL_docs(copia);
+                        encontradoEnIndice = true; 
+                        break; 
+                    }
+                }
+                if(!encontradoEnIndice){ //Cuando no estaba en el índice
+                    InformacionTermino nuevoTermino = InformacionTermino(); 
+                    nuevoTermino.setFt(1); 
+                    nuevoTermino.setFtc(1);
+                    elNuevo.setFt(1);
+                    if(almacenarPosTerm == true){
+                        list<int> copia = elNuevo.getPosTerm(); 
+                        copia.push_back(actual.getNumPal());//Metemos el número de palabras que nos hemos encontrado
+                        elNuevo.setPosTerm(copia);
+                    }
+                    //Crearemos un par para añadir al índice
+                    std::pair<long int , InfTermDoc > añadido (actual.getIdDoc() , elNuevo); 
+                    unordered_map<long int , InfTermDoc> listaNueva;
+                    listaNueva.insert(añadido);
+                    nuevoTermino.setL_docs(listaNueva);
+                    std::pair<std::string , InformacionTermino> pareja (to , nuevoTermino);
+                    this->indice.insert(pareja);
+                    
+                }
+                actual.setNumPalSinParada(actual.getNumPalSinParada() + 1 );
+                actual.setNumPal(actual.getNumPal() + 1 );
+            }
+        
+        }
+		//Tendremos que buscar las palabras que son diferentes del documento 
+        /*long int counter = 0; 
+	    unordered_map<long int,InfTermDoc> copiaLista;
+	    for(auto iterator=indice.begin();iterator!=indice.end();++iterator){ //Por cada término indexado, buscaremos aquel que contenga el documento que estamos buscando
+		    copiaLista=iterator->second.getL_docs();
+		    for( std::pair< long int , InfTermDoc>it2 : copiaLista ) {
+                if(it2.first == actual.getIdDoc()) {
+                    counter++;
+                }
+            }
+	    }*/
+        actual.setNumPalDiferentes(palabrasEncontradas.size()); 
+        std::pair<string , InfDoc> result (to , actual); 
+        indiceDocs.insert(result);
+        //ACTUALIZAMOS EL RESTO
+        informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs()+1);
+        informacionColeccionDocs.setNumTotalPalDiferentes(indice.size());
+        informacionColeccionDocs.setNumTotalPal(informacionColeccionDocs.getNumTotalPal()+actual.getNumPal());
+        informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()+actual.getTamBytes());
+        informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
+        file.close(); 
+        palabrasEncontradas.clear(); 
+        
+        return true; 
+    }
+    return false; 
 
 }
 
@@ -558,27 +742,59 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
     string cadena;
     file.open(ficheroDocumentos.c_str());
     if(!file) {
-        cerr << "ERROR: No existe el archivo: ficheroDocumentos"<< endl; return false; 
+        cerr << "ERROR: No existe el archivo: "<<ficheroDocumentos<< endl; 
+        return false; 
     }
-    std::string buffer;
     std::ifstream f(ficheroDocumentos.c_str());
     std::string to; 
-    std::string p; 
-    p.clear();
-    p= "";
-    //vamos a configurar el tokenizador para sperar cada una de las dos cosas que componen el mapa
-    tok.DelimitadoresPalabra("\t ");//Para tokenizar los indices
 	tok.CasosEspeciales(false);
-	tok.PasarAminuscSinAcentos(false);
+	tok.PasarAminuscSinAcentos(true);
     list<string> res; 
     while(std::getline(f,to,'\n')){ //RECORREREMSO CADA UNA DE LAS L?NEAS
         //COSAS A TENER EN CUENTA
         /**
-         * 1.
-         * 
+         * 1. Mirar si ese documento ya está indexado, de manera que si lo está, no tendremos que indexarlo nuevamente, solamente tendremos que modificar su frecuencia
          * */
+        bool estabaIndexado = false;
+        for(auto iterator= indiceDocs.begin() ; iterator!=indiceDocs.end() ; iterator++){
+            if(iterator->first == to ){ //Si ya está indexado, haremos sus respectivas modificaciones
+                //Compararemos las fechas de los documentos
+                estabaIndexado=true;
+                Fecha copiaFechaIterator = iterator->second.getFechaModificacion(); 
+                Fecha f =Fecha();  //Creamos una nueva fecha con la hora local del sistema
+                if( f == copiaFechaIterator || f<copiaFechaIterator) break; //No haremos nada 
+                if(f > copiaFechaIterator ){ //Cuando f es más actual que la fecha que había metida
+                    //Borraremos e indexaremos nuevamente el documento
+                    auto copia = iterator; 
+                    indiceDocs.erase(iterator);
+                    try{
+                        if(!IndexarUnDocu(const_cast<char *>(copia->first.c_str())  , copia->second )) return true; 
+                    }catch(...){
+                        cerr << "ERROR: No hay espacio suficiente en memoria para la indexación"<<endl;
+                        return false; 
+                    }
+                    break; 
+                }
+                //break;
+            } 
+        }
+        if(!estabaIndexado){
+            try{
+                InfDoc actual = InfDoc(); 
+                actual.setIdDoc(indiceDocs.size() + 1 );
+                if(!IndexarUnDocu(const_cast<char*>(to.c_str()), actual)) return true;
+            }catch(...){
+                cerr << "ERROR: No hay espacio suficiente en memoria para la indexación"<<endl;
+                return false; 
+            }
+
+        } 
     
     }
+    f.close(); 
+    file.close();
+    to.clear();
+    return true; 
 
 
 }
