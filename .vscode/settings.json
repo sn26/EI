@@ -60,6 +60,8 @@
         "mutex": "cpp",
         "scoped_allocator": "cpp",
         "thread": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "codecvt": "cpp",
+        "filesystem": "cpp"
     }
 }

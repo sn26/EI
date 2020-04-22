@@ -3,6 +3,8 @@
 #include <iostream> 
 #include <sys/stat.h> 
 #include <sys/types.h> 
+#include <dirent.h>
+
 
 //Ser? privado porque no se permitir? al usuario usarlo
 IndexadorHash::IndexadorHash(){
@@ -831,7 +833,7 @@ bool IndexadorHash::Borra(const string& word){
 
 
  bool IndexadorHash::IndexarPregunta(const string& preg){
-     PARA MAÑANA POR LA MAÑANA!!
+     //PARA MAÑANA POR LA MAÑANA!!
  
  }
 /**
@@ -1020,6 +1022,75 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
 
 }
 
+string IndexadorHash::IndexarSubDirectorios(const string & secondDir ){
+    DIR* dirp = opendir(secondDir.c_str());
+    struct dirent * dp;
+    list<char*> ficheros; 
+    while ((dp = readdir(dirp)) != NULL) {
+        ficheros.push_back(dp->d_name);
+    }
+    closedir(dirp);
+    struct stat dir;
+    std::string buffer; 
+    buffer.clear(); 
+    for (std::list<char*>::iterator it=ficheros.begin(); it != ficheros.end(); ++it){
+        //Miraremos si es un fichero, porque en el caso de que lo sea, tendremos que añadir nuevos documentos
+        if( stat( *it,& dir) == 0 ){
+            if( dir.st_mode & S_IFDIR ){ //it's a directory
+                //Si es un directorio tendreos que indexar nuevamente el directorio, y para ello, pues llamaremos de nuevo a la función de indexar directorio
+                IndexarSubDirectorios(secondDir + '/' + *it   ); 
+            }
+            else if( dir.st_mode & S_IFREG ){//it's a file
+                //Si es un archivo, podremos meterlo en un archivo de indexación con el que llamaremos al nuevo Indexar
+                buffer.append(secondDir + '/' + *it);
+                buffer.append("\n");
+            }
+        }
+    }
+    return buffer;
+}
+/**
+ * Método para indexar un directorio 
+ * HAREMOS USO DEL INDEXADOR DE UN FICHERO CON NOMBRES DE DOCUMENTOS 
+ * */ 
+bool IndexadorHash::IndexarDirectorio(const string& dirAIndexar){
+    
+
+    DIR* dirp = opendir(dirAIndexar.c_str());
+    struct dirent * dp;
+    list<char*> ficheros; 
+    while ((dp = readdir(dirp)) != NULL) {
+        ficheros.push_back(dp->d_name);
+    }
+    closedir(dirp);
+    struct stat dir;
+    std::string buffer; 
+    buffer.clear(); 
+    for (std::list<char*>::iterator it=ficheros.begin(); it != ficheros.end(); ++it){
+        //Miraremos si es un fichero, porque en el caso de que lo sea, tendremos que añadir nuevos documentos
+        if( stat( *it,& dir) == 0 ){
+            if( dir.st_mode & S_IFDIR ){ //it's a directory
+                //Si es un directorio tendreos que indexar nuevamente el directorio, y para ello, pues llamaremos de nuevo a la función de indexar directorio
+                buffer.append(IndexarSubDirectorios(dirAIndexar + '/' + *it)); 
+            }
+            else if( dir.st_mode & S_IFREG ){//it's a file
+                //Si es un archivo, podremos meterlo en un archivo de indexación con el que llamaremos al nuevo Indexar
+                buffer.append(*it);
+                buffer.append("\n");
+            }
+        }
+    }
+    //Ahora escribiremos en el archivo de destino
+    std::ofstream i("FicheroConNombreDocus.txt");
+    if(!i) {
+        cerr<<"Error, no se ha podido realizar la indexación del directorio"<<endl;
+        return false;
+    }
+    i.write(buffer.data(), buffer.size());
+    this->Indexar("FicheroConNombreDocus.txt");
+    return true;
+    
+}
 
 
 
