@@ -1099,6 +1099,98 @@ int IndexadorHash::DevolverTipoStemming () const{
 }
 
 
+bool IndexadorHash::IndexarUnTermPregunta(const string & preg , InformacionTerminoPregunta & term ){
+    
+    if( this->almacenarPosTerm ==true ) { //Si tenemos que almacenar las posiciones
+        list<int> copia = term.getPosTerm();
+        copia.push_back(this->infPregunta.getNumTotalPal());//Metemos el número de palabras que nos hemos encontrado
+        term.setPosTerm(copia);                
+    }
+    term.setFt(term.getFt() +1 ); 
+    
+    //Crearemos el par y lo indexaremos
+    std::pair<string , InformacionTerminoPregunta> copia (preg , term ); 
+    this->indicePregunta.insert(copia);// Metemos la nueva pregunta indexada
+    return true; 
+
+}
+
+/**
+ * Método para indexar una pregunta
+ * 
+ * */
+bool IndexadorHash::IndexarPregunta(const string& preg){
+    //HAREMOS UN BUCLE PAR A IR MIRANDO CADA UNA DE LAS PALABRAS QUE CONFORMAN LA PREGUNTA(DESPUÉS DE HABERLAS TOKENIZADO)
+    this->tok.PasarAminuscSinAcentos(true ); 
+    this->tok.CasosEspeciales(false); 
+    list<string > tokens; //PALABRAS RESULTANTES
+    this->tok.Tokenizar(preg, tokens ); 
+    this->pregunta = preg;
+    this->infPregunta.~InformacionPregunta(); // Borramos todo lo que había de la información de la pregunta
+    list<string> palabrasAnadidas;
+    palabrasAnadidas.clear(); 
+    this->indicePregunta.clear(); 
+    //Ahora recorreremos la lista y miraremos si estaba ya indexada y demás 
+     for (std::list<string>::iterator iterPalabraPregunta=tokens.begin(); iterPalabraPregunta != tokens.end(); ++iterPalabraPregunta){
+        //Lo primero que haremos será aplicar el stemming, dado que las palabras que tengamos indexadas vendrán ya con el stemming aplicado
+        //APLICAREMOS EL TIPO DE STEMMING? 
+        if(this->tipoStemmer == 1 ){
+            stemmerPorter s = stemmerPorter() ;
+            s.stemmer(*iterPalabraPregunta, 1); 
+        } 
+        if(this->tipoStemmer == 2 ){
+            stemmerPorter s = stemmerPorter() ;
+            s.stemmer(*iterPalabraPregunta, 2);  
+        } 
+        //Ahora miraremos si ya estaba indexado
+        bool estabaIndexado = false;
+        for(auto iterator= indicePregunta.begin() ; iterator!=indicePregunta.end() ; iterator++){
+            if(iterator->first == *iterPalabraPregunta ){ //Si ya está indexado, haremos sus respectivas modificaciones
+                //Compararemos las fechas de los documentos
+                estabaIndexado=true;
+                auto copia = iterator; 
+                indicePregunta.erase(iterator);
+                try{
+                   IndexarUnTermPregunta( *iterPalabraPregunta  , copia->second); 
+                }catch(...){
+                    cerr << "ERROR: No hay espacio suficiente en memoria para la indexación"<<endl;
+                    return false; 
+                }
+                break; 
+            }
+                //break;
+        } 
+        if(!estabaIndexado){
+            bool esPalabraParada = false; 
+            //Miraremos si es una palabra de parada
+            for(auto iterator= this->stopWords.begin() ; iterator!= this->stopWords.end() ; iterator++){
+                if(*iterator == *iterPalabraPregunta ){
+                    //Si es una palabra de parada, simplemente sumaremos al total 
+                    this->infPregunta.setNumTotalPal(this->infPregunta.getNumTotalPal() + 1 ); 
+                    esPalabraParada = true; 
+                    break; 
+                }
+            }
+            if(!esPalabraParada){
+                this->infPregunta.setNumTotalPalSinParada(this->infPregunta.getNumTotalPalSinParada() + 1 ); 
+                this->infPregunta.setNumTotalPal(this->infPregunta.getNumTotalPal() + 1 ); 
+                InformacionTerminoPregunta p = InformacionTerminoPregunta(); 
+                try{
+                    IndexarUnTermPregunta(*iterPalabraPregunta, p );
+                }catch(...){
+                    cerr << "ERROR: No hay espacio suficiente en memoria para la indexación"<<endl;
+                    return false; 
+                }
+            }
+
+        } 
+    
+    }
+    this->infPregunta.setNumTotalPalDiferentes(this->indicePregunta.size() ); 
+    return true;
+
+
+}
 
 
 

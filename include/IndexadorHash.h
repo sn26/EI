@@ -79,6 +79,7 @@ class IndexadorHash {
 
 
         private: 
+            bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &);
             string IndexarSubDirectorios(const string & secondDir); 
             bool IndexarUnDocu(const char * to , InfDoc &); //HECHO Método para indexar un documento (Lo usaremos dentro del método de indexar documentos)
             char * pasarAMinSin(char * word) const; //HECHO PARA PASAR A MINÚSCULAS UNA PALABRA
