@@ -261,7 +261,7 @@ bool IndexadorHash::ReadPrivValuesMaps() {
     //vamos a configurar el tokenizador para sperar cada una de las dos cosas que componen el mapa
     tok.DelimitadoresPalabra("\t ");//Para tokenizar los indices
 	tok.CasosEspeciales(false);
-	tok.PasarAminuscSinAcentos(false);
+	tok.PasarAminuscSinAcentos(true);
     unordered_map<string , InformacionTermino> totalIndice;
     unordered_map<string , InfDoc> indiceDocsCopia; 
     unordered_map<string , InformacionTerminoPregunta> totalIndicePregunta;
@@ -525,7 +525,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
             this->almacenarPosTerm=false;
         }
     }catch(...){
-        cerr<<"Los par?metros que se han introducido no son correctos y no se ha podido generar el objeto de indexaci?n"<<endl;
+        cerr<<"Los parámetros que se han introducido no son correctos y no se ha podido generar el objeto de indexación"<<endl;
         return; 
     }
     try{
@@ -536,7 +536,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
     }
     try{
         if(!ReadPrivValuesMaps() ){
-            cerr<<"Error al leer el archivo con los ?ndices"<<endl;
+            cerr<<"Error al leer el archivo con los índices"<<endl;
             return;
         }
     }catch(...){
@@ -594,6 +594,7 @@ bool IndexadorHash::Existe(const string& word) const{//Tendremos que aplicar el 
         }
         return false; 
     }
+    
     if(this->tipoStemmer==2){
         stemmerPorter s = stemmerPorter() ;
         char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
@@ -607,15 +608,113 @@ bool IndexadorHash::Existe(const string& word) const{//Tendremos que aplicar el 
 
 }
 
+
+
+
+bool IndexadorHash::Devuelve(const string& word, const string& nomDoc, InfTermDoc& InfDocSalida) const{
+    //Miraremos el tipo de stemming 
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        for(std::pair<std::string, InformacionTermino> iterator: this->indice ){
+            if(iterator.first == word|| iterator.first == copia){
+                //Si hemos encontrado la palabra indexada, buscaremos que ese mismo contenga el nombre del documento
+                for(std::pair<std::string, InfDoc > it2: this->indiceDocs){ //Miramos si el documento está dentro Y COINCIDE CON EL DOCUMENTO QUE QUEREMOS
+                    if(it2.first == nomDoc){ //Miramos si coinciden los nombres (del documento iterado y del documento que me han pasado de entrada)
+                        //Miraremos para cada uno de los documentos, si su id coincide con los documentos que hay indexados en el índice del término, de manera que si coinciden, ya sabremos que es el bueno
+                        //cogeremos cada uno de los documentos
+                        for(auto it3 = iterator.second.getL_docs().begin() ; it3!=iterator.second.getL_docs().end() ; it3 ++) { //Con esto vamos sacando cada una de las iteraciones que están detntro del término
+                            if ( it3->first == it2.second.getIdDoc() ) {
+                                InfDocSalida = it3->second; 
+                                return true; 
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+        return false; 
+    }
+    if( this->tipoStemmer == 1) {
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        for(std::pair<std::string, InformacionTermino> iterator: this->indice ){
+            if(iterator.first == word|| iterator.first == copia){
+                //Si hemos encontrado la palabra indexada, buscaremos que ese mismo contenga el nombre del documento
+                for(std::pair<std::string, InfDoc > it2: this->indiceDocs){ //Miramos si el documento está dentro Y COINCIDE CON EL DOCUMENTO QUE QUEREMOS
+                    if(it2.first == nomDoc){ //Miramos si coinciden los nombres (del documento iterado y del documento que me han pasado de entrada)
+                        for(auto it3 = iterator.second.getL_docs().begin() ; it3!=iterator.second.getL_docs().end() ; it3 ++) { //Con esto vamos sacando cada una de las iteraciones que están detntro del término
+                            if ( it3->first == it2.second.getIdDoc() ) { //Comprobamos que coincidan los ids(para saber si es el mismo documento)
+                                InfDocSalida = it3->second; 
+                                return true; 
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+        return false;  
+    }
+    if(this->tipoStemmer == 2 ){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 2); 
+        for(std::pair<std::string, InformacionTermino> iterator: this->indice ){
+            if(iterator.first == word|| iterator.first == copia){
+                //Si hemos encontrado la palabra indexada, buscaremos que ese mismo contenga el nombre del documento
+                for(std::pair<std::string, InfDoc > it2: this->indiceDocs){ //Miramos si el documento está dentro Y COINCIDE CON EL DOCUMENTO QUE QUEREMOS
+                    if(it2.first == nomDoc){ //Miramos si coinciden los nombres (del documento iterado y del documento que me han pasado de entrada)
+                        for(auto it3 = iterator.second.getL_docs().begin() ; it3!=iterator.second.getL_docs().end() ; it3 ++) { //Con esto vamos sacando cada una de las iteraciones que están detntro del término
+                            if ( it3->first == it2.second.getIdDoc() ) { //Comprobamos que coincidan los ids(para saber si es el mismo documento)
+                                InfDocSalida = it3->second; 
+                                return true; 
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+        return false; 
+    }
+    return false;
+}
+
 /**
  * Cuando devolvemos el índice
  * */ 
 bool IndexadorHash::Devuelve(const string& word, InformacionTermino& inf) const{
-    if(Existe(word)) {
-        inf= indice.find(word)->second;
-        return true; 
-    }else {
-        inf = InformacionTermino(); 
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia){
+                inf = iterator->second;
+                return true;
+            } 
+        }
+        return false; 
+    }
+    if( this->tipoStemmer == 1) {
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                inf= iterator->second; 
+                return true; 
+            }
+        }
+        return false; 
+    }
+    if(this->tipoStemmer == 2 ){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 2); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                inf= iterator->second; 
+                return true; 
+            }
+        }
         return false; 
     }
 }
@@ -629,9 +728,112 @@ bool IndexadorHash::Inserta(const string& word, const InformacionTermino& inf){
     return false;
 }
 
+/***
+ * Miraremos si hay alguna pregunta indexada y la devolveremos en preg 
+ * 
+ * */ 
+bool IndexadorHash::DevuelvePregunta(string& preg) const{
+    if(indicePregunta.size() > 0 ){
+        preg = this->pregunta; //Cogemos la pregunta que tengamos indexada actualmente.
+        return true; 
+    }
+    return false;
+}
+
+/**
+ * Métdo para devolver el infPregunta de una pregunta que tengamos almacenada
+ * */
+bool IndexadorHash::DevuelvePregunta(const string& word, InformacionTerminoPregunta& inf) const{
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        for(auto iterator = this->indicePregunta.begin() ; iterator!=this->indicePregunta.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia){
+                inf = iterator->second;
+                return true;
+            } 
+        }
+        return false; 
+    }
+    if( this->tipoStemmer == 1) {
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        for(auto iterator = this->indicePregunta.begin() ; iterator!=this->indicePregunta.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                inf= iterator->second; 
+                return true; 
+            }
+        }
+        return false; 
+    }
+    if(this->tipoStemmer == 2 ){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 2); 
+        for(auto iterator = this->indicePregunta.begin() ; iterator!=this->indicePregunta.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                inf= iterator->second; 
+                return true; 
+            }
+        }
+        return false; 
+    }
+}
+/**
+ * Método para borrar una palabra del índice con todas las palabras indexadas
+ * 
+ * */ 
+bool IndexadorHash::Borra(const string& word){
+    //Miraremos si esa palabra después de aplicarle el stemming está indexada
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        for(auto iterator = this->indicePregunta.begin() ; iterator!=this->indicePregunta.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia){
+                this->indice.erase(iterator->first );
+            } 
+        }
+        return false; 
+    }
+    if( this->tipoStemmer == 1) {
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        for(auto iterator = this->indicePregunta.begin() ; iterator!=this->indicePregunta.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                this->indice.erase(iterator->first);
+                return true; 
+            }
+        }
+        return false; 
+    }
+    if(this->tipoStemmer == 2 ){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 2); 
+        for(auto iterator = this->indicePregunta.begin() ; iterator!=this->indicePregunta.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                this->indice.erase(iterator->first);
+                return true; 
+            }
+        }
+        return false; 
+    } 
+}
+
+ void IndexadorHash::VaciarIndiceDocs(){
+    this->indiceDocs.clear(); 
+ }
+
+ void IndexadorHash::VaciarIndicePreg(){
+    this->pregunta.clear(); 
+    this->indicePregunta.clear(); 
+ }
 
 
-
+ bool IndexadorHash::IndexarPregunta(const string& preg){
+     PARA MAÑANA POR LA MAÑANA!!
+ 
+ }
 /**
  * Método que usaremos para indexar documentos
  * 
@@ -817,6 +1019,8 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
 
 
 }
+
+
 
 
 int IndexadorHash::DevolverTipoStemming () const{ 

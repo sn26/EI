@@ -52,12 +52,12 @@ class IndexadorHash {
             cout << "Informacion de la pregunta: " << infPregunta << endl;
         }
         bool Devuelve(const string& word, InformacionTermino& inf) const; //HECHO
-        bool Devuelve(const string& word, const string& nomDoc, InfTermDoc& InfDoc) const; 
+        bool Devuelve(const string& word, const string& nomDoc, InfTermDoc& InfDoc) const;  //HECHO
         bool Existe(const string& word) const;  //HECHO
-        bool Borra(const string& word);
+        bool Borra(const string& word); //HEHCO**PERO NO SÉ SI ESTÁ CORRECTO DEL TODO
         bool BorraDoc(const string& nomDoc);
-        void VaciarIndiceDocs(); 
-        void VaciarIndicePreg(); 
+        void VaciarIndiceDocs();  //HECHO
+        void VaciarIndicePreg(); //HECHO
         bool Actualiza(const string& word, const InformacionTermino& inf); 
         bool Inserta(const string& word, const InformacionTermino& inf); 
         int NumPalIndexadas() const;
