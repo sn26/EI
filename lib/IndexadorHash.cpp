@@ -1038,7 +1038,7 @@ string IndexadorHash::IndexarSubDirectorios(const string & secondDir ){
         if( stat( *it,& dir) == 0 ){
             if( dir.st_mode & S_IFDIR ){ //it's a directory
                 //Si es un directorio tendreos que indexar nuevamente el directorio, y para ello, pues llamaremos de nuevo a la función de indexar directorio
-                IndexarSubDirectorios(secondDir + '/' + *it   ); 
+                buffer.append(IndexarSubDirectorios(secondDir + '/' + *it   )); 
             }
             else if( dir.st_mode & S_IFREG ){//it's a file
                 //Si es un archivo, podremos meterlo en un archivo de indexación con el que llamaremos al nuevo Indexar
