@@ -25,7 +25,7 @@ class IndexadorHash {
         ~IndexadorHash(); //HECHO
         IndexadorHash& operator= (const IndexadorHash&); //HECHO
         bool Indexar(const string& ficheroDocumentos); //Método con el que vamos a coger los documentos y a indexarlos HECHO
-        bool IndexarDirectorio(const string& dirAIndexar); 
+        bool IndexarDirectorio(const string& dirAIndexar); //HECHO
         bool GuardarIndexacion() const; //HECHO
         bool RecuperarIndexacion (const string& directorioIndexacion); //HECHO
         void ImprimirIndexacion() const {
@@ -35,10 +35,10 @@ class IndexadorHash {
             cout << "Documentos indexados: " << endl;
             //cout << nomDoc << '\t' << InfDoc << endl;
         }
-        bool IndexarPregunta(const string& preg); 
-        bool DevuelvePregunta(string& preg) const; 
-        bool DevuelvePregunta(const string& word, InformacionTerminoPregunta& inf) const;
-        bool DevuelvePregunta(InformacionPregunta& inf) const;
+        bool IndexarPregunta(const string& preg); //HECHO
+        bool DevuelvePregunta(string& preg) const; //HECHO
+        bool DevuelvePregunta(const string& word, InformacionTerminoPregunta& inf) const; //HECHO
+        bool DevuelvePregunta(InformacionPregunta& inf) const; //HECHO
         void ImprimirIndexacionPregunta() {
             cout << "Pregunta indexada: "<< pregunta << endl;
             cout << "Terminos indexados en la pregunta: " << endl; 
@@ -55,32 +55,32 @@ class IndexadorHash {
         bool Devuelve(const string& word, const string& nomDoc, InfTermDoc& InfDoc) const;  //HECHO
         bool Existe(const string& word) const;  //HECHO
         bool Borra(const string& word); //HEHCO**PERO NO SÉ SI ESTÁ CORRECTO DEL TODO
-        bool BorraDoc(const string& nomDoc);
+        bool BorraDoc(const string& nomDoc); //HECHO 
         void VaciarIndiceDocs();  //HECHO
         void VaciarIndicePreg(); //HECHO
-        bool Actualiza(const string& word, const InformacionTermino& inf); 
-        bool Inserta(const string& word, const InformacionTermino& inf); 
-        int NumPalIndexadas() const;
-        string DevolverFichPalParada () const; 
-        void ListarPalParada() const; 
-        int NumPalParada() const; 
-        string DevolverDelimitadores () const;// Devuelve los delimitadores utilizados por el tokenizador 
-        bool DevolverCasosEspeciales () const; // Devuelve si el tokenizador analiza los casos especiales 
-        bool DevolverPasarAminuscSinAcentos () const; // Devuelve si el tokenizador pasa a minúsculas y sin acentos
-        bool DevolverAlmacenarPosTerm () const; // Devuelve el valor de almacenarPosTerm
-        string DevolverDirIndice () const;  // Devuelve ?directorioIndice? (el directorio del disco duro donde se almacenará el índice)
+        bool Actualiza(const string& word, const InformacionTermino& inf); //HECHO
+        bool Inserta(const string& word, const InformacionTermino& inf);  //HECHO
+        int NumPalIndexadas() const; //HECHO
+        string DevolverFichPalParada () const;  //HECHO
+        void ListarPalParada() const; //HECHO
+        int NumPalParada() const; //HECHO; 
+        string DevolverDelimitadores () const;// Devuelve los delimitadores utilizados por el tokenizador  HECHO
+        bool DevolverCasosEspeciales () const; //HECHO Devuelve si el tokenizador analiza los casos especiales 
+        bool DevolverPasarAminuscSinAcentos () const; //HECHO Devuelve si el tokenizador pasa a minúsculas y sin acentos
+        bool DevolverAlmacenarPosTerm () const; //HECHO Devuelve el valor de almacenarPosTerm
+        string DevolverDirIndice () const;  // HECHO Devuelve ?directorioIndice? (el directorio del disco duro donde se almacenará el índice)
         int DevolverTipoStemming () const; // HECHO Devolverá el tipo de stemming realizado en la indexación de acuerdo con el valor indicado en la variable privada ?tipoStemmer?
-        bool DevolverAlmEnDisco () const; // Devolverá el valor indicado en la variable privada ?almEnDisco? 
-        void ListarInfColeccDocs() const; // Mostrar por pantalla: cout << informacionColeccionDocs << endl;
-        void ListarTerminos() const; // Mostrar por pantalla el contenido el contenido del campo privado ?índice?: cout << termino << ?\t? << InformacionTermino << endl;
+        bool DevolverAlmEnDisco () const; // HECHO Devolverá el valor indicado en la variable privada ?almEnDisco? 
+        void ListarInfColeccDocs() const; //HECHO Mostrar por pantalla: cout << informacionColeccionDocs << endl;
+        void ListarTerminos() const; // HECHO Mostrar por pantalla el contenido el contenido del campo privado ?índice?: cout << termino << ?\t? << InformacionTermino << endl;
         bool ListarTerminos(const string& nomDoc) const;
         void ListarDocs() const; // Mostrar por pantalla el contenido el contenido del campo privado
         bool ListarDocs(const string& nomDoc) const;
 
 
         private: 
-            bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &);
-            string IndexarSubDirectorios(const string & secondDir); 
+            bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &); //Método que usaremos para indexar términos que componen una pregunta  HECHO
+            string IndexarSubDirectorios(const string & secondDir);  //Método que usaremos para indexar los ficheros de los subdirectorios del fichero inicial
             bool IndexarUnDocu(const char * to , InfDoc &); //HECHO Método para indexar un documento (Lo usaremos dentro del método de indexar documentos)
             char * pasarAMinSin(char * word) const; //HECHO PARA PASAR A MINÚSCULAS UNA PALABRA
             bool ReadPrivValuesMaps(); //HECHO

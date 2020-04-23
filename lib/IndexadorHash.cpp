@@ -722,12 +722,130 @@ bool IndexadorHash::Devuelve(const string& word, InformacionTermino& inf) const{
 }
 
 bool IndexadorHash::Inserta(const string& word, const InformacionTermino& inf){
-    if(!Existe(word)){
-        std::pair<std::string , InformacionTermino> pareja (word , inf);
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia){
+               return false; 
+            } 
+        }
+        std::pair<string, InformacionTermino> pareja (copia , inf);
         this->indice.insert(pareja);
-        return true;
+        return true; 
     }
-    return false;
+    if( this->tipoStemmer == 1) {
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                return false; 
+            }
+        }
+        std::pair<string, InformacionTermino> pareja (copia , inf);
+        this->indice.insert(pareja);
+        return true; 
+    }
+    if(this->tipoStemmer == 2 ){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 2); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                return false; 
+            }
+        }
+        std::pair<string, InformacionTermino> pareja (copia , inf);
+        this->indice.insert(pareja);
+        return true; 
+    }
+}
+
+/**
+ * Método para actualizar
+ * 
+ * */ 
+bool IndexadorHash::Actualiza(const string& word, const InformacionTermino& inf){
+    //Miraremos si el término está indexado
+    if(this->tipoStemmer == 0){
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str())); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia){
+                iterator->second = inf; 
+                return true;
+            } 
+        }
+        return false; 
+    }
+    if( this->tipoStemmer == 1) {
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 1); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                iterator->second = inf; 
+                return true; 
+            }
+        }
+        return false; 
+    }
+    if(this->tipoStemmer == 2 ){
+        stemmerPorter s = stemmerPorter() ;
+        char* copia = pasarAMinSin(const_cast<char*>(word.c_str()));  
+        s.stemmer(copia , 2); 
+        for(auto iterator = this->indice.begin() ; iterator!=this->indice.end() ; iterator ++ ){
+            if(iterator->first == word|| iterator->first == copia) {
+                iterator->second = inf; 
+                return true; 
+            }
+        }
+        return false; 
+    }
+}
+
+void IndexadorHash::ListarPalParada() const{
+    //Recorreremos la lista y la imprimiremo por pantalla 
+    for(auto iterator = this->stopWords.begin(); iterator != this->stopWords.end() ; iterator++){
+        cout<<*iterator<<endl;
+    }
+}
+int IndexadorHash::NumPalIndexadas() const{
+    return this->indice.size();
+}
+string IndexadorHash::DevolverFichPalParada () const{
+    return this->ficheroStopWords;
+}
+int IndexadorHash::DevolverTipoStemming () const{ 
+    return this->tipoStemmer;
+}
+int IndexadorHash::NumPalParada() const{
+    return this->stopWords.size(); 
+}
+string IndexadorHash::DevolverDelimitadores () const{
+    return this->tok.DelimitadoresPalabra();
+}
+bool IndexadorHash::DevolverCasosEspeciales () const{
+    return this->tok.CasosEspeciales();
+}
+bool IndexadorHash::DevolverPasarAminuscSinAcentos () const{
+    return this->tok.PasarAminuscSinAcentos();
+}
+bool IndexadorHash::DevolverAlmacenarPosTerm () const{
+    return this->almacenarPosTerm;
+}
+string IndexadorHash::DevolverDirIndice () const{
+    return this->directorioIndice;
+}
+bool IndexadorHash::DevolverAlmEnDisco () const{
+    return this->almacenarEnDisco;
+}
+void IndexadorHash::ListarInfColeccDocs() const{
+    cout<<this->informacionColeccionDocs<<endl;
+}
+void IndexadorHash::ListarTerminos() const{
+    for(std::pair<std::string , InformacionTermino> iterator : this->indice){
+        cout<<iterator.first<<'\t'<<iterator.second<<endl;
+    }
 }
 
 /***
@@ -781,6 +899,19 @@ bool IndexadorHash::DevuelvePregunta(const string& word, InformacionTerminoPregu
         return false; 
     }
 }
+
+/**
+ * Método para mirar si hay una pregunta indexada y devolverla 
+ *
+ * */
+bool IndexadorHash::DevuelvePregunta(InformacionPregunta& inf) const{
+    if(this->pregunta.length()>0 || this->indicePregunta.size() >0){
+        inf = this->infPregunta; 
+        return true; 
+    }
+    return false;
+
+}
 /**
  * Método para borrar una palabra del índice con todas las palabras indexadas
  * 
@@ -822,6 +953,53 @@ bool IndexadorHash::Borra(const string& word){
     } 
 }
 
+/**
+ * Método para borrar documentos
+ * 
+ * */
+bool IndexadorHash::BorraDoc(const string& nomDoc){
+    //Primero miraremos si tenemos el documento indexado 
+    for(std::pair<std::string, InfDoc > it: this->indiceDocs) {
+        if(it.first == nomDoc){//Si es el mismo documento
+            //Tendremos que coger su id y borrarlo de todos los índices que lo contengan 
+            for(std::pair<std::string , InformacionTermino> it2 : this->indice){
+                //Tendremos que mirar si contienen el id 
+                for(std::pair<long int , InfTermDoc > it3 : it2.second.getL_docs()) {
+                    if(it3.first == it.second.getIdDoc()){ // Si coinciden los ids del documento
+                        //Tendremos que actualizar las frecuencias
+                        it2.second.setFd(it2.second.getFd() -1 ); 
+                        it2.second.setFtc(it2.second.getFtc() - it3.second.getFt());
+                        it2.second.setFt(it2.second.getFt() - it3.second.getFt());
+                        //Miraremos si contenía más documentos
+                        unordered_map<long int , InfTermDoc > copia = it2.second.getL_docs();
+                        copia.erase(it3.first);
+                        it2.second.setL_docs(copia); 
+                        if(it2.second.getL_docs().size==0){
+                            this->indice.erase(it2.first);
+                        }
+                        break; 
+                    }
+
+                } 
+                
+            }
+            //Ahora borraremos el documento
+            
+	        informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()-it.second.getTamBytes());
+		    informacionColeccionDocs.setNumTotalPal(informacionColeccionDocs.getNumTotalPal()-it.second.getNumPal());
+		    informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()-it.second.getNumPalSinParada());
+		    informacionColeccionDocs.setNumTotalPalDiferentes(informacionColeccionDocs.getNumTotalPalDiferentes()-it.second.getNumPalDiferentes());
+            this->indiceDocs.erase(it.first);
+            informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs()-1);
+            return true; 
+        }
+    }
+    return false;
+    
+
+
+ }
+
  void IndexadorHash::VaciarIndiceDocs(){
     this->indiceDocs.clear(); 
  }
@@ -832,10 +1010,7 @@ bool IndexadorHash::Borra(const string& word){
  }
 
 
- bool IndexadorHash::IndexarPregunta(const string& preg){
-     //PARA MAÑANA POR LA MAÑANA!!
- 
- }
+
 /**
  * Método que usaremos para indexar documentos
  * 
@@ -1094,9 +1269,7 @@ bool IndexadorHash::IndexarDirectorio(const string& dirAIndexar){
 
 
 
-int IndexadorHash::DevolverTipoStemming () const{ 
-    return this->tipoStemmer;
-}
+
 
 
 bool IndexadorHash::IndexarUnTermPregunta(const string & preg , InformacionTerminoPregunta & term ){
@@ -1125,10 +1298,9 @@ bool IndexadorHash::IndexarPregunta(const string& preg){
     this->tok.CasosEspeciales(false); 
     list<string > tokens; //PALABRAS RESULTANTES
     this->tok.Tokenizar(preg, tokens ); 
+    this->pregunta.clear();
     this->pregunta = preg;
     this->infPregunta.~InformacionPregunta(); // Borramos todo lo que había de la información de la pregunta
-    list<string> palabrasAnadidas;
-    palabrasAnadidas.clear(); 
     this->indicePregunta.clear(); 
     //Ahora recorreremos la lista y miraremos si estaba ya indexada y demás 
      for (std::list<string>::iterator iterPalabraPregunta=tokens.begin(); iterPalabraPregunta != tokens.end(); ++iterPalabraPregunta){
@@ -1146,13 +1318,12 @@ bool IndexadorHash::IndexarPregunta(const string& preg){
         bool estabaIndexado = false;
         for(auto iterator= indicePregunta.begin() ; iterator!=indicePregunta.end() ; iterator++){
             if(iterator->first == *iterPalabraPregunta ){ //Si ya está indexado, haremos sus respectivas modificaciones
-                //Compararemos las fechas de los documentos
                 estabaIndexado=true;
                 auto copia = iterator; 
                 indicePregunta.erase(iterator);
                 try{
                    IndexarUnTermPregunta( *iterPalabraPregunta  , copia->second); 
-                }catch(...){
+                }catch(...){ //CUANDO NO TENEMOS ESPACIO EN MEMORIA
                     cerr << "ERROR: No hay espacio suficiente en memoria para la indexación"<<endl;
                     return false; 
                 }
@@ -1191,6 +1362,9 @@ bool IndexadorHash::IndexarPregunta(const string& preg){
 
 
 }
+
+
+
 
 
 
