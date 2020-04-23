@@ -73,10 +73,9 @@ class IndexadorHash {
         bool DevolverAlmEnDisco () const; // HECHO Devolverá el valor indicado en la variable privada ?almEnDisco? 
         void ListarInfColeccDocs() const; //HECHO Mostrar por pantalla: cout << informacionColeccionDocs << endl;
         void ListarTerminos() const; // HECHO Mostrar por pantalla el contenido el contenido del campo privado ?índice?: cout << termino << ?\t? << InformacionTermino << endl;
-        bool ListarTerminos(const string& nomDoc) const;
-        void ListarDocs() const; // Mostrar por pantalla el contenido el contenido del campo privado
-        bool ListarDocs(const string& nomDoc) const;
-
+        bool ListarTerminos(const string& nomDoc) const; //HECHO
+        void ListarDocs() const; //HECHO Mostrar por pantalla el contenido el contenido del campo privado
+        bool ListarDocs(const string& nomDoc) const; //HECHO
 
         private: 
             bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &); //Método que usaremos para indexar términos que componen una pregunta  HECHO

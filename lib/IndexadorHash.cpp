@@ -847,7 +847,37 @@ void IndexadorHash::ListarTerminos() const{
         cout<<iterator.first<<'\t'<<iterator.second<<endl;
     }
 }
-
+bool IndexadorHash::ListarTerminos(const string& nomDoc) const{
+    for(std::pair<std::string, InfDoc > it: this->indiceDocs) {
+        if(it.first == nomDoc){//Si es el mismo documento
+            //Tendremos que coger su id y borrarlo de todos los índices que lo contengan 
+            for(std::pair<std::string , InformacionTermino> it2 : this->indice){
+                //Tendremos que mirar si contienen el id 
+                for(std::pair<long int , InfTermDoc > it3 : it2.second.getL_docs()) {
+                    if(it3.first == it.second.getIdDoc()){ // Si coinciden los ids del documento
+                        cout << it3.first << '\t' << it3.second << endl;
+                    }
+                } 
+            }
+            return true; 
+        }
+    }
+    return false; 
+}
+void IndexadorHash::ListarDocs()const {
+    for(std::pair<std::string , InfDoc> it : this->indiceDocs){
+        cout << it.first << '\t' <<it.second<< endl; 
+    }
+}
+bool IndexadorHash::ListarDocs(const string& nomDoc) const{
+    for(std::pair<std::string , InfDoc> it : this->indiceDocs){
+        if(it.first == nomDoc){
+            cout << it.first << '\t' <<it.second<< endl; 
+            return true; 
+        }
+    }
+    return false;
+}
 /***
  * Miraremos si hay alguna pregunta indexada y la devolveremos en preg 
  * 
