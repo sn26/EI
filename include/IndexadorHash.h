@@ -31,8 +31,14 @@ class IndexadorHash {
         void ImprimirIndexacion() const {
             cout << "Terminos indexados: " << endl;
             //HABRÁ QUE RECORRER CADA UNO DE LOS TÉRMINOS
+            for(auto iterator = this->indice.begin() ; iterator!= indice.end() ; iterator ++){
+                cout<<iterator->first<<'\t'<<iterator->second<<endl; 
+            }
             //cout << termino << '\t' << InformacionTermino << endl;
             cout << "Documentos indexados: " << endl;
+            for(auto iterator = this->indiceDocs.begin() ; iterator!=indiceDocs.end() ; iterator++){
+                cout<<iterator->first<<'\t'<<iterator->second<<endl; 
+            }
             //cout << nomDoc << '\t' << InfDoc << endl;
         }
         bool IndexarPregunta(const string& preg); //HECHO
@@ -42,6 +48,9 @@ class IndexadorHash {
         void ImprimirIndexacionPregunta() {
             cout << "Pregunta indexada: "<< pregunta << endl;
             cout << "Terminos indexados en la pregunta: " << endl; 
+            for(auto iterator = this->indicePregunta.begin() ; iterator!= indicePregunta.end() ; iterator++){
+                cout<<iterator->first<<'\t'<<iterator->second<<endl ; 
+            }
             //cout << termino << '\t' << InformacionTerminoPregunta << endl;
             cout << "Informacion de la pregunta: " << infPregunta << endl;
         

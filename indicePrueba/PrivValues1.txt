@@ -1,0 +1,16 @@
+PreguntaIndexada
+FicheroStopWords./StopWordsEspanyol.txt
+tipoStemmer
+Almacena en disco
+lmacena posTerm
+TOKDelimiters. ,:
+OKPasarAMinSin
+TOKCasosEspeciales
+ICDDNumDocs
+ICDDNumTotalPal
+ICDDNumTotalPalSinParada
+ICDDNumTotalPalDiferentes
+ICDDTamBytes
+INFPREGNumTotalPal
+INFPREGTotalPalDiferentes
+INFPREGTotalPalSinParada

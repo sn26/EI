@@ -36,12 +36,20 @@ InformacionTermino::InformacionTermino(const int& fft, const int& ffd)
     this->ft = fft;
     this->fd = ffd;
 }
+InformacionTermino & InformacionTermino::operator= (const InformacionTermino & ift){
+    this->ftc= ift.ftc; 
+    this->fd = ift.fd; 
+    this->ft = ift.ft;
+    this->l_docs = ift.l_docs;
+    return *this;
+}
 
 //Constructor de copia de la clase
 InformacionTermino::InformacionTermino(const InformacionTermino& it){
     this->ftc= it.ftc; 
     this->ft= it.ft;
     this->fd = it.fd; 
+    this->l_docs = it.l_docs;
 }
 
 InformacionTermino::InformacionTermino(){ft = fd =ftc = 0;}
@@ -131,7 +139,13 @@ Fecha::Fecha(const int& dia , const int &mes , const int &anyo, const int &hota 
 Fecha::Fecha() {
     time_t now =time(0); 
     tm *ltm = localtime(&now);
-    Fecha(ltm); //Creamos una nueva fecha con la hora local
+    this->anyo = 1900 + ltm->tm_year; 
+    this->mes = 1 + ltm->tm_mon; 
+    this->dia = ltm->tm_mday;
+    this->hora = 1 + ltm->tm_hour; 
+    this->min = 1 + ltm->tm_min; 
+    this->seg = 1+ ltm->tm_sec; 
+    
 }
 
 Fecha::Fecha(tm * ltm ){
@@ -188,6 +202,8 @@ const long int InfDoc::getIdDoc(){ return this->idDoc;  }
 void InfDoc::setIdDoc(const long int &idDoc){this->idDoc = idDoc; }
 const int InfDoc::getNumPal(){return this->numPal;}
 void InfDoc::setNumPal(const int &numPal){this->numPal = numPal;}
+void InfDoc::setTamBytes(const int &tam ){this->tamBytes = tamBytes;}
+const int InfDoc::getTamBytes(){return this->tamBytes;}
 const int InfDoc::getNumPalSinParada(){return this->numPalSinParada; }
 void InfDoc::setNumPalSinParada(const int & numPalSinParada) {this->numPalSinParada = numPalSinParada;}
 const int InfDoc::getNumPalDiferentes(){return this->numPalDiferentes;}

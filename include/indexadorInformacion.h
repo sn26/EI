@@ -12,7 +12,18 @@ using namespace std;
 
 
 class InfTermDoc {
-    friend ostream& operator<<(ostream& s, const InfTermDoc& p);
+    friend ostream& operator<<(ostream& s, const InfTermDoc& p){
+        s << "ft: " << p.ft;
+        // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
+        //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
+        //?\t? << posicion; 
+        InfTermDoc p2 = p; 
+        for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
+            s <<"\t" << *it;
+        }
+    
+        return s;
+    }
     public:
         InfTermDoc (const InfTermDoc &);
         InfTermDoc (); // Inicializa ft = 0
@@ -28,22 +39,20 @@ class InfTermDoc {
         list<int> posTerm;
         
 };
-ostream& operator<<(ostream& s, const InfTermDoc& p){
-    s << "ft: " << p.ft;
-    // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
-    //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
-    //?\t? << posicion; 
-    InfTermDoc p2 = p; 
-    for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
-         s <<"\t" << *it;
-    }
+/*ostream& operator<<(ostream& s, const InfTermDoc& p){
     
-    return s;
-} 
+} */
 
 
 class InformacionTermino {
-    friend ostream& operator<<(ostream& s, const InformacionTermino& p);
+    friend ostream& operator<<(ostream& s, const InformacionTermino& p){
+        s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs.size();
+        // A continuaci?n se mostrar?an todos los elementos de p.l_docs: s <<?\tId.Doc: ? << idDoc << ?\t? << InfTermDoc;   
+        for ( auto it = p.l_docs.begin(); it != p.l_docs.end(); ++it ){
+            s <<"\tId.Doc: " << it->first << "\t" << it->second;  
+        }
+        return s;
+    }
     public:
         InformacionTermino (const InformacionTermino &);
         InformacionTermino(const int& fft, const int& ffd);
@@ -67,15 +76,10 @@ class InformacionTermino {
 // Tabla Hash que se acceder? por el id del documento, devolviendo unobjeto de la clase InfTermDoc que contiene toda la informaci?n de  aparici?n del t?rmino en el documento
 };
 
-ostream& operator<<(ostream& s, const InformacionTermino& p) {
+/*ostream& operator<<(ostream& s, const InformacionTermino& p) {
 
-    s << "Frecuencia total: " << p.ftc << "\tfd: " << p.l_docs.size();
-    // A continuaci?n se mostrar?an todos los elementos de p.l_docs: s <<?\tId.Doc: ? << idDoc << ?\t? << InfTermDoc;   
-    for ( auto it = p.l_docs.begin(); it != p.l_docs.end(); ++it ){
-        s <<"\tId.Doc: " << it->first << "\t" << it->second;  
-    }
-    return s;
-} 
+    
+} */
 
 class Fecha{
     //friend ostream& operator<<(ostream &s, const Fecha& p);
@@ -125,7 +129,12 @@ class Fecha{
 
 
 class InfDoc {
-    friend ostream& operator<<(ostream& s, const InfDoc& p);
+    friend ostream& operator<<(ostream& s, const InfDoc& p){
+        s << "idDoc: " << p.idDoc << "\tnumPal: " << p.numPal <<
+        "\tnumPalSinParada: " << p.numPalSinParada << "\tnumPalDiferentes: " <<
+        p.numPalDiferentes << "\ttamBytes: " << p.tamBytes;
+        return s;
+    }
     public:
         InfDoc (const InfDoc &);
         InfDoc ();
@@ -154,16 +163,17 @@ class InfDoc {
 };
 
 
-ostream& operator<<(ostream& s, const InfDoc& p) {
-    s << "idDoc: " << p.idDoc << "\tnumPal: " << p.numPal <<
-    "\tnumPalSinParada: " << p.numPalSinParada << "\tnumPalDiferentes: " <<
-    p.numPalDiferentes << "\ttamBytes: " << p.tamBytes;
-    return s;
-} 
+
 
 
 class InfColeccionDocs {
-    friend ostream& operator<<(ostream& s, const InfColeccionDocs& p);
+    friend ostream& operator<<(ostream& s, const InfColeccionDocs& p){
+        s << "numDocs: " << p.numDocs << "\tnumTotalPal: " << p.numTotalPal <<
+        "\tnumTotalPalSinParada: " << p.numTotalPalSinParada <<
+        "\tnumTotalPalDiferentes: " << p.numTotalPalDiferentes << "\ttamBytes: " << p.tamBytes;
+        
+        return s;
+    }
     public:
         InfColeccionDocs (const InfColeccionDocs &);
         InfColeccionDocs ();
@@ -192,17 +202,21 @@ class InfColeccionDocs {
         long int numTotalPalDiferentes; // N? total de palabras diferentes en la colecci?n que no sean stopwords (sin acumular la frecuencia de cada una de ellas)
         long int tamBytes; // Tama?o total en bytes de la colecci?n
 };
-ostream& operator<<(ostream& s, const InfColeccionDocs& p){
-    s << "numDocs: " << p.numDocs << "\tnumTotalPal: " << p.numTotalPal <<
-        "\tnumTotalPalSinParada: " << p.numTotalPalSinParada <<
-        "\tnumTotalPalDiferentes: " << p.numTotalPalDiferentes << "\ttamBytes: " << p.tamBytes;
-        
-    return s;
-} 
+
 
 
 class InformacionTerminoPregunta {
-    friend ostream& operator<<(ostream& s, const InformacionTerminoPregunta& p);
+    friend ostream& operator<<(ostream& s, const InformacionTerminoPregunta& p){
+        s << "ft: " << p.ft;
+        // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
+        //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
+        //?\t? << posicion; 
+        InformacionTerminoPregunta p2 = p; 
+        for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
+            s <<"\t" << *it;
+        }
+        return s; 
+    }
     public:
         InformacionTerminoPregunta (const InformacionTerminoPregunta &);
         InformacionTerminoPregunta ();
@@ -218,21 +232,14 @@ class InformacionTerminoPregunta {
         int ft; // Frecuencia total del t?rmino en la pregunta
         list<int> posTerm;// Solo se almacenar? esta informaci?n si el campo privado del indexador almacenarPosTerm == true
 };
-ostream& operator<<(ostream& s, const InformacionTerminoPregunta& p) {
-    s << "ft: " << p.ft;
-    // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
-    //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
-    //?\t? << posicion; 
-    InformacionTerminoPregunta p2 = p; 
-    for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
-         s <<"\t" << *it;
-    }
-    return s; 
-}
 
 
 class InformacionPregunta {
-    friend ostream& operator<<(ostream& s, const InformacionPregunta& p);
+    friend ostream& operator<<(ostream& s, const InformacionPregunta& p){
+        s << "numTotalPal: " << p.numTotalPal << "\tnumTotalPalSinParada: "<<
+        p.numTotalPalSinParada << "\tnumTotalPalDiferentes: " << p.numTotalPalDiferentes;
+        return s;
+    }
     public:
         InformacionPregunta (const InformacionPregunta &);
         InformacionPregunta ();
@@ -254,11 +261,6 @@ class InformacionPregunta {
         long int numTotalPalDiferentes;
         // N? total de palabras diferentes en la pregunta que no sean stop-words (sin acumular la frecuencia de cada una de ellas)
 };
-ostream& operator<<(ostream& s, const InformacionPregunta& p){
-    s << "numTotalPal: " << p.numTotalPal << "\tnumTotalPalSinParada: "<<
-    p.numTotalPalSinParada << "\tnumTotalPalDiferentes: " << p.numTotalPalDiferentes;
-    return s;
-} 
 
 #endif
 

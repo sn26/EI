@@ -1,18 +1,20 @@
 .PHONY= clean
 
-CC=g++ 
-OPTIONS= -g -std=gnu++0x
+CC=g++
+OPTIONS= -g -std=c++11
 DEBUG= #-D DEBUG
 LIBDIR=lib
 INCLUDEDIR=include
-_OBJ= tokenizador.o
+_OBJ= indexadorHash.o tokenizador.o stemmer.o indexadorInformacion.o
 OBJ = $(patsubst %,$(LIBDIR)/%,$(_OBJ))
-MAIN=main.cpp
 
-all: practica1
-practica1: src/$(MAIN) $(OBJ)
-	$(CC) $(OPTIONS) $(DEBUG) -I$(INCLUDEDIR) src/$(MAIN) $(OBJ) -o practica1
+all: indexador
+
+indexador:    src/main.cpp $(OBJ)
+	$(CC) $(OPTIONS) $(DEBUG) -I$(INCLUDEDIR) src/main.cpp $(OBJ) -o indexador
+
 $(LIBDIR)/%.o : $(LIBDIR)/%.cpp $(INCLUDEDIR)/%.h
 	$(CC) $(OPTIONS) $(DEBUG) -c -I$(INCLUDEDIR) -o $@ $<
+
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJ) 
