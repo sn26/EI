@@ -1061,95 +1061,101 @@ bool IndexadorHash::BorraDoc(const string& nomDoc){
  * 
  * */
 bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
-    struct stat propiedadesDoc; //Lo usaremos para poder sacar los valores del tama?o en bytes
-    if( stat(this->directorioIndice.c_str(), &propiedadesDoc) == -1 || !S_ISDIR(propiedadesDoc.st_mode) ) {
-        ifstream file; 
-        string ext = ".tk";
-        string ficheroSalida = fichero + ext;
+    cout<<"ESTOY ENTRANDO "<<endl;
+    struct stat properties;  //Lo usaremos para poder sacar los valores del tama?o en bytes
+    int rc = stat(this->directorioIndice.c_str(), &properties);
+    //if( S_ISDIR(properties.st_mode) )return false;
+    cout<<"ESTOY ENTRANDO "<<fichero<<endl;
+    ifstream file; 
+        
+    string ext = ".tk";
+    string ficheroSalida = fichero + ext;
         
         
-        this->tok.Tokenizar(fichero , ficheroSalida); //Los tokens se habr?n guardado en el fichero de salida, y ser? de ah? de donde los cogeremos
-        file.open(ficheroSalida);
-        if(!file) return false; //No mostramos mensaje de error porque se supone que el archivo lo acabamos de crear  
-        std::ifstream f(ficheroSalida);
-        std::string to; 
-        actual.setTamBytes( propiedadesDoc.st_size); //Ponemos el tama?o de los bytes
-        actual.setNumPal(0); actual.setNumPalSinParada(0); actual.setNumPalDiferentes(0); 
-        InfTermDoc elNuevo = InfTermDoc(); 
-        elNuevo.setFt(0);
-        list<string> palabrasEncontradas; 
-        palabrasEncontradas.clear();
-        //Iremos por cada token creado en el archivo
-        while(std::getline(f,to,'\n')){
-            std::list<std::string>::iterator iteradorPalabras;
-            iteradorPalabras= std::find(palabrasEncontradas.begin(), palabrasEncontradas.end(), to); //Si no estaba (SER? UNA PALABRA DIFERENTE)
-            if(iteradorPalabras == palabrasEncontradas.end()){
-                palabrasEncontradas.insert(iteradorPalabras, to); //Insertamos al final 
-            }
-            bool eraPalabraParada= false;
-            for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
-                if(*iterator == to){ //Hemos encontrado una stopWord
-                    //Sumaremos +1 al n?mero de palabras que nos hemos encontrado en el documento
-                    actual.setNumPal(actual.getNumPal() + 1);
+    this->tok.Tokenizar(fichero , ficheroSalida); //Los tokens se habr?n guardado en el fichero de salida, y ser? de ah? de donde los cogeremos
+    file.open(ficheroSalida , std::ifstream::ate | std::ifstream::binary);
+    if(!file) return false; //No mostramos mensaje de error porque se supone que el archivo lo acabamos de crear  
+    
+    std::ifstream f(ficheroSalida );
+    lstat(ficheroSalida.c_str() , &properties);
+    std::string to; 
+    actual.setTamBytes( file.tellg()); //Ponemos el tama?o de los bytes
+    actual.setNumPal(0); actual.setNumPalSinParada(0); actual.setNumPalDiferentes(0); 
+    InfTermDoc elNuevo = InfTermDoc(); 
+    elNuevo.setFt(0);
+    list<string> palabrasEncontradas; 
+    palabrasEncontradas.clear();
+    //Iremos por cada token creado en el archivo
+    while(std::getline(f,to,'\n')){
+        std::list<std::string>::iterator iteradorPalabras;
+        iteradorPalabras= std::find(palabrasEncontradas.begin(), palabrasEncontradas.end(), to); //Si no estaba (SER? UNA PALABRA DIFERENTE)
+        if(iteradorPalabras == palabrasEncontradas.end()){
+            palabrasEncontradas.insert(iteradorPalabras, to); //Insertamos al final 
+        }
+        bool eraPalabraParada= false;
+        for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
+            if(*iterator == to){ //Hemos encontrado una stopWord
+                //Sumaremos +1 al n?mero de palabras que nos hemos encontrado en el documento
+                actual.setNumPal(actual.getNumPal() + 1);
                     
-                    eraPalabraParada = true;
-                    break;
-                }
+                eraPalabraParada = true;
+                break;
             }
-            if(!eraPalabraParada){ //Como no era una palabra de parada, pues miramos si estaba ya o no indexada
-                //Miramos si estaba ya indexada (Como quiero hacerlo eficiente, no utilizo la funci?n Existe para mirar esto)
-                if(tipoStemmer == 1 ){
-                    stemmerPorter s = stemmerPorter(); 
-                    s.stemmer(to , 1); 
-                }
-                if(tipoStemmer == 2 ){
-                    stemmerPorter s = stemmerPorter(); 
-                    s.stemmer(to , 2); 
-                }
-                bool encontradoEnIndice = false; 
-                for( std::pair<std::string, InformacionTermino> iterator : this->indice){
-                    if(iterator.first == to ){ //NOS HEMOS ENCONTRADO CON EL DOCUMENTO INDEXADO 
-                        iterator.second.setFtc(iterator.second.getFtc() +1 );
-                        iterator.second.setFt(iterator.second.getFt() + 1 );
-                        elNuevo.setFt(elNuevo.getFt() + 1 );
-                        if( this->almacenarPosTerm ==true ) { //Si tenemos que almacenar las posiciones
-                            list<int> copia = elNuevo.getPosTerm(); 
-                            copia.push_back(actual.getNumPal());//Metemos el n?mero de palabras que nos hemos encontrado
-                            elNuevo.setPosTerm(copia);
-                        }
-                        //Ahora, meteremos el par dentro del iterador
-                        std::pair<long int , InfTermDoc > added (actual.getIdDoc() , elNuevo); 
-                        unordered_map<long int , InfTermDoc> copia = iterator.second.getL_docs(); 
-                        copia.insert(added);
-                        iterator.second.setL_docs(copia);
-                        encontradoEnIndice = true; 
-                        break; 
-                    }
-                }
-                if(!encontradoEnIndice){ //Cuando no estaba en el ?ndice
-                    InformacionTermino nuevoTermino = InformacionTermino(); 
-                    nuevoTermino.setFt(1); 
-                    nuevoTermino.setFtc(1);
-                    elNuevo.setFt(1);
-                    if(almacenarPosTerm == true){
+        }
+        if(!eraPalabraParada){ //Como no era una palabra de parada, pues miramos si estaba ya o no indexada
+            //Miramos si estaba ya indexada (Como quiero hacerlo eficiente, no utilizo la funci?n Existe para mirar esto)
+            if(tipoStemmer == 1 ){
+                stemmerPorter s = stemmerPorter(); 
+                s.stemmer(to , 1); 
+            }
+            if(tipoStemmer == 2 ){
+                stemmerPorter s = stemmerPorter(); 
+                s.stemmer(to , 2); 
+            }
+            bool encontradoEnIndice = false; 
+            for( std::pair<std::string, InformacionTermino> iterator : this->indice){
+                if(iterator.first == to ){ //NOS HEMOS ENCONTRADO CON EL DOCUMENTO INDEXADO 
+                    iterator.second.setFtc(iterator.second.getFtc() +1 );
+                    iterator.second.setFt(iterator.second.getFt() + 1 );
+                    elNuevo.setFt(elNuevo.getFt() + 1 );
+                    if( this->almacenarPosTerm ==true ) { //Si tenemos que almacenar las posiciones
                         list<int> copia = elNuevo.getPosTerm(); 
                         copia.push_back(actual.getNumPal());//Metemos el n?mero de palabras que nos hemos encontrado
                         elNuevo.setPosTerm(copia);
                     }
-                    //Crearemos un par para a?adir al ?ndice
+                    //Ahora, meteremos el par dentro del iterador
                     std::pair<long int , InfTermDoc > added (actual.getIdDoc() , elNuevo); 
-                    unordered_map<long int , InfTermDoc> listaNueva;
-                    listaNueva.insert(added);
-                    nuevoTermino.setL_docs(listaNueva);
-                    std::pair<std::string , InformacionTermino> pareja (to , nuevoTermino);
-                    this->indice.insert(pareja);
-                    
+                    unordered_map<long int , InfTermDoc> copia = iterator.second.getL_docs(); 
+                    copia.insert(added);
+                    iterator.second.setL_docs(copia);
+                    encontradoEnIndice = true; 
+                    break; 
                 }
-                actual.setNumPalSinParada(actual.getNumPalSinParada() + 1 );
-                actual.setNumPal(actual.getNumPal() + 1 );
             }
-        
+            if(!encontradoEnIndice){ //Cuando no estaba en el ?ndice
+                InformacionTermino nuevoTermino = InformacionTermino(); 
+                nuevoTermino.setFt(1); 
+                nuevoTermino.setFtc(1);
+                elNuevo.setFt(1);
+                if(almacenarPosTerm == true){
+                    list<int> copia = elNuevo.getPosTerm(); 
+                    copia.push_back(actual.getNumPal());//Metemos el n?mero de palabras que nos hemos encontrado
+                    elNuevo.setPosTerm(copia);
+                }
+                //Crearemos un par para a?adir al ?ndice
+                std::pair<long int , InfTermDoc > added (actual.getIdDoc() , elNuevo); 
+                unordered_map<long int , InfTermDoc> listaNueva;
+                listaNueva.insert(added);
+                nuevoTermino.setL_docs(listaNueva);
+                std::pair<std::string , InformacionTermino> pareja (to , nuevoTermino);
+                this->indice.insert(pareja);
+                    
+            }
+            actual.setNumPalSinParada(actual.getNumPalSinParada() + 1 );
+            actual.setNumPal(actual.getNumPal() + 1 );
         }
+        
+    }
 		//Tendremos que buscar las palabras que son diferentes del documento 
         /*long int counter = 0; 
 	    unordered_map<long int,InfTermDoc> copiaLista;
@@ -1161,21 +1167,21 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
                 }
             }
 	    }*/
-        actual.setNumPalDiferentes(palabrasEncontradas.size()); 
-        std::pair<string , InfDoc> result (to , actual); 
-        indiceDocs.insert(result);
-        //ACTUALIZAMOS EL RESTO
-        informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs()+1);
-        informacionColeccionDocs.setNumTotalPalDiferentes(indice.size());
-        informacionColeccionDocs.setNumTotalPal(informacionColeccionDocs.getNumTotalPal()+actual.getNumPal());
-        informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()+actual.getTamBytes());
-        informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
-        file.close(); 
-        palabrasEncontradas.clear(); 
+    actual.setNumPalDiferentes(palabrasEncontradas.size()); 
+    std::pair<string , InfDoc> result (to , actual); 
+    indiceDocs.insert(result);
+    //ACTUALIZAMOS EL RESTO
+    informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs()+1);
+    informacionColeccionDocs.setNumTotalPalDiferentes(indice.size());
+    informacionColeccionDocs.setNumTotalPal(informacionColeccionDocs.getNumTotalPal()+actual.getNumPal());
+    informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()+actual.getTamBytes());
+    informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
+    file.close(); 
+    palabrasEncontradas.clear(); 
         
-        return true; 
-    }
-    return false; 
+    return true; 
+    //}
+    //return false; 
 
 }
 
