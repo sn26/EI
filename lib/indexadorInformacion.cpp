@@ -113,7 +113,7 @@ bool Fecha::operator< (const Fecha &f ){
                     if(this->min == f.min ) {
                         if(this->seg> f.seg  ) return false; 
                         if(this->seg < f.seg ) return true ; 
-                        //Nunca podrán haber llegado hasta aquí y ser iguales, porque entonces se hubiera metido en el primero caso 
+                        //Nunca podr?n haber llegado hasta aqu? y ser iguales, porque entonces se hubiera metido en el primero caso 
                     }
                 }
             }
@@ -125,7 +125,14 @@ bool Fecha::operator>(const Fecha & f ) {
     if(*this < f ) return false; 
     return true;  
 }
-Fecha::Fecha(const Fecha& fecha){ *this = fecha;  }
+Fecha::Fecha(const Fecha& fecha){ 
+    this->anyo = fecha.anyo; 
+    this->dia = fecha.dia; 
+    this->mes = fecha.mes; 
+    this->hora= fecha.hora; 
+    this->min = fecha.min; 
+    this->seg= fecha.seg;
+}
 
 Fecha::Fecha(const int& dia , const int &mes , const int &anyo, const int &hota , const int & min , const int & seg ){
     this->anyo = anyo; 
@@ -186,7 +193,12 @@ InfDoc& InfDoc::operator=(const InfDoc & id){
     return *this;
 }
 InfDoc::InfDoc(const InfDoc &id){
-    (*this) = id; 
+    this->fechaModificacion = id.fechaModificacion; 
+    this->idDoc = id.idDoc; 
+    this->numPal = id.numPal; 
+    this->numPalDiferentes = id.numPalDiferentes; 
+    this->numPalSinParada = id.numPalSinParada; 
+    this->tamBytes = id.tamBytes;
 }
 
 InfDoc::InfDoc(){
@@ -228,7 +240,10 @@ InfColeccionDocs & InfColeccionDocs::operator=(const InfColeccionDocs &icds){
     return *this;
 }
 InfColeccionDocs::InfColeccionDocs(const InfColeccionDocs & icds ){
-    (*this) = icds; 
+    this->numDocs= icds.numDocs; 
+    this->numTotalPal = icds.numTotalPal;
+    this->numTotalPalDiferentes = icds.numTotalPalDiferentes; 
+    this->numTotalPalSinParada = icds.numTotalPalSinParada;  
 
 }
 
@@ -260,13 +275,15 @@ InformacionTerminoPregunta::InformacionTerminoPregunta(){
 InformacionTerminoPregunta & InformacionTerminoPregunta::operator=(const InformacionTerminoPregunta & itp ){
     this->ft = itp.ft; 
     this->posTerm.clear(); 
-    this->posTerm = posTerm;
+    this->posTerm = itp.posTerm;
     return *this;
 
 
 }
 InformacionTerminoPregunta:: InformacionTerminoPregunta(const InformacionTerminoPregunta & itp ){
-    (*this) = itp; 
+    this->ft = itp.ft; 
+    this->posTerm.clear(); 
+    this->posTerm = itp.posTerm; 
 }
 
 InformacionTerminoPregunta::~InformacionTerminoPregunta(){
@@ -287,13 +304,15 @@ void InformacionTerminoPregunta::setPosTerm(const list<int> & posTerm ){this->po
  * */
 
 InformacionPregunta & InformacionPregunta::operator=(const InformacionPregunta & ip ){
-    this->numTotalPal = numTotalPal; 
-    this->numTotalPalSinParada = numTotalPalSinParada; 
-    this->numTotalPalDiferentes = numTotalPalDiferentes; 
+    this->numTotalPal = ip.numTotalPal; 
+    this->numTotalPalSinParada = ip.numTotalPalSinParada; 
+    this->numTotalPalDiferentes = ip.numTotalPalDiferentes; 
     return *this;
 }
 InformacionPregunta::InformacionPregunta(const InformacionPregunta & ip ){
-    (*this ) = ip; 
+    this->numTotalPal = ip.numTotalPal; 
+    this->numTotalPalSinParada = ip.numTotalPalSinParada; 
+    this->numTotalPalDiferentes = ip.numTotalPalDiferentes;  
 }
 
 InformacionPregunta::InformacionPregunta(){

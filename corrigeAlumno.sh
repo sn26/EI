@@ -1,16 +1,16 @@
-
 #!/bin/bash
 # Corrector practicas Explotacion de la Informacion
 # Modificacion de Antonio Ferrandez sobre la version de:
 # (c) Sergio Lujan Mora, 2001
 
 #################################################
-# SE EJECUTA DESDE EL DIRECTORIO QUE CONTIENE src lib include
-#   DICHO DIRECTORIO NO CONTENDRA NINGUN ARCHIVO $EJE (VER CONTENIDO DE DICHA VARIABLE)
+# SE EJECUTA DESDE EL DIRECTORIO QUE CONTIENE src lib include (p.ej. ./corrigeAlumno.sh desde el directorio que contiene src lib include)
+#   DICHO DIRECTORIO NO CONTENDRA NINGUN ARCHIVO $EJE (p.ej. ya que en este fichero EJE=practica1, en ese directorio no podra haber ningun fichero que se llame "practica1")
+#   DICHO DIRECTORIO CONTENDRA UN FICHERO makefile QUE GENERE EL EJECUTABLE $EJE CUYO PROGRAMA PRINCIPAL SERA $MAIN (p.ej. ya que en este fichero EJE=practica1, el makefile ha de crear un ejecutable de nombre "practica1", como el makefile mostrado en la siguiente seccion ) 
 # EL SUBDIRECTORIO src:
-#   * CONTENDRA LOS FICHEROS DE PRUEBA: tad*.cpp 
-#   * SUS SALIDAS CORRESPONDIENTES tad*.cpp.sal
-#   * NO CONTENDRA NINGUN ARCHIVO $MAIN (VER CONTENIDO DE DICHA VARIABLE)
+#   * CONTENDRA LOS FICHEROS DE PRUEBA: *.cpp 
+#   * SUS SALIDAS CORRESPONDIENTES *.cpp.sal
+#   * NO CONTENDRA NINGUN ARCHIVO $MAIN (el directorio src no debe contener ningun archivo con nombre "main.cpp" ya que MAIN=main.cpp)
 # 
 # corrigeAlumno
 
@@ -21,7 +21,7 @@
 MAKE1=makefile
 
 # Fichero que contiene el main en el makefile
-MAIN=indexer.cpp
+MAIN=main.cpp
 # Nombre del ejecutable en el makefile
 EJE=indexador
 #################################################
@@ -176,3 +176,4 @@ function corrige()
 
 
   corrige $DIROK1 $MAKE1
+

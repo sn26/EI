@@ -9,7 +9,8 @@
 //Será privado porque no se permitirá al usuario usarlo y lo implementaremos a nuestra manera
 IndexadorHash::IndexadorHash(){
     this->pregunta=""; 
-    this->tok = Tokenizador();         
+    this->tok = Tokenizador();     
+    this->tok.PasarAminuscSinAcentos(true);    
     this->tok.CasosEspeciales(false);
     this->tok.DelimitadoresPalabra(" "); 
     this->ficheroStopWords="";
@@ -64,13 +65,13 @@ void IndexadorHash::ReadStopWords(){
 
 IndexadorHash::~IndexadorHash(){ 
     this->indice.clear(); this->indiceDocs.clear(); this->indicePregunta.clear(); 
-    this->informacionColeccionDocs.~InfColeccionDocs(); 
+    //this->informacionColeccionDocs.~InfColeccionDocs(); 
     this->pregunta.clear(); this->pregunta= ""; 
-    this->infPregunta.~InformacionPregunta();
+    //this->infPregunta.~InformacionPregunta();
     this->stopWords.clear(); 
     this->ficheroStopWords.clear(); this->ficheroStopWords="";
     this->directorioIndice.clear(); this->directorioIndice="";
-    this->tok.~Tokenizador(); 
+    //this->tok.~Tokenizador(); 
     this->tipoStemmer = 0;
     this->almacenarEnDisco = false ; 
     this->almacenarPosTerm= false; ;
@@ -101,7 +102,21 @@ IndexadorHash & IndexadorHash::operator=(const IndexadorHash& copia ){
 
 //CONSTRUCTOR DE COPIA
 IndexadorHash::IndexadorHash(const IndexadorHash& copia ){
-    (*this) = copia;
+    //(*this) = copia;
+    this->indice = copia.indice;
+    this->indiceDocs = copia.indiceDocs; 
+    this->informacionColeccionDocs = copia.informacionColeccionDocs; 
+    this->pregunta = copia.pregunta;
+    this->indicePregunta = copia.indicePregunta; 
+    this->infPregunta = copia.infPregunta; 
+    this->stopWords = copia.stopWords; 
+    this->ficheroStopWords= copia.ficheroStopWords; 
+    this->directorioIndice = copia.directorioIndice; 
+    this->tok = copia.tok; 
+    this->tipoStemmer = copia.tipoStemmer;
+    this->almacenarEnDisco = copia.almacenarEnDisco; 
+    this->almacenarPosTerm = copia.almacenarPosTerm;
+    
 }
 
 /**
@@ -197,7 +212,7 @@ bool IndexadorHash::GuardarIndexacion() const{
         i.close();
         buffer.clear(); 
         std::stringstream o; 
-        o.clear();
+        //o.clear();
         //Ahora guardaremos el resto en PrivValuesMaps.txt
         o<<"INDICE\n";
         for ( auto it = this->indice.begin(); it != this->indice.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n'; }
@@ -226,7 +241,7 @@ bool IndexadorHash::GuardarIndexacion() const{
         std::string buffer;
         buffer.clear();
         std::stringstream o; 
-        o.clear();
+        //o.clear();
         o<<"INDICE\n";
         for ( auto it = this->indice.begin(); it != this->indice.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n'; }
         buffer = o.str(); 
@@ -527,7 +542,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
             this->almacenarPosTerm=false;
         }
     }catch(...){
-        cerr<<"Los par?metros que se han introducido no son correctos y no se ha podido generar el objeto de indexaci?n"<<endl;
+        cerr<<"Los parámetros que se han introducido no son correctos y no se ha podido generar el objeto de indexación"<<endl;
         return; 
     }
     try{
