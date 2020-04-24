@@ -6,11 +6,11 @@ lmacena posTerm
 TOKDelimiters. ,:
 OKPasarAMinSin
 TOKCasosEspeciales
-ICDDNumDocs
-ICDDNumTotalPal
-ICDDNumTotalPalSinParada
-ICDDNumTotalPalDiferentes
-ICDDTamBytes
+DDNumDocs
+lPal
+TotalPalSinParada
+NumTotalPalDiferentes
+ntes
 INFPREGNumTotalPal
 INFPREGTotalPalDiferentes
 INFPREGTotalPalSinParada

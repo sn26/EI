@@ -24,13 +24,13 @@ class IndexadorHash {
         IndexadorHash(const IndexadorHash&); //HECHO 
         ~IndexadorHash(); //HECHO
         IndexadorHash& operator= (const IndexadorHash&); //HECHO
-        bool Indexar(const string& ficheroDocumentos); //Método con el que vamos a coger los documentos y a indexarlos HECHO
+        bool Indexar(const string& ficheroDocumentos); //M?todo con el que vamos a coger los documentos y a indexarlos HECHO
         bool IndexarDirectorio(const string& dirAIndexar); //HECHO
         bool GuardarIndexacion() const; //HECHO
         bool RecuperarIndexacion (const string& directorioIndexacion); //HECHO
         void ImprimirIndexacion() const {
             cout << "Terminos indexados: " << endl;
-            //HABRÁ QUE RECORRER CADA UNO DE LOS TÉRMINOS
+            //HABR? QUE RECORRER CADA UNO DE LOS T?RMINOS
             for(auto iterator = this->indice.begin() ; iterator!= indice.end() ; iterator ++){
                 cout<<iterator->first<<'\t'<<iterator->second<<endl; 
             }
@@ -63,7 +63,7 @@ class IndexadorHash {
         bool Devuelve(const string& word, InformacionTermino& inf) const; //HECHO
         bool Devuelve(const string& word, const string& nomDoc, InfTermDoc& InfDoc) const;  //HECHO
         bool Existe(const string& word) const;  //HECHO
-        bool Borra(const string& word); //HEHCO**PERO NO SÉ SI ESTÁ CORRECTO DEL TODO
+        bool Borra(const string& word); //HEHCO**PERO NO S? SI EST? CORRECTO DEL TODO
         bool BorraDoc(const string& nomDoc); //HECHO 
         void VaciarIndiceDocs();  //HECHO
         void VaciarIndicePreg(); //HECHO
@@ -75,41 +75,41 @@ class IndexadorHash {
         int NumPalParada() const; //HECHO; 
         string DevolverDelimitadores () const;// Devuelve los delimitadores utilizados por el tokenizador  HECHO
         bool DevolverCasosEspeciales () const; //HECHO Devuelve si el tokenizador analiza los casos especiales 
-        bool DevolverPasarAminuscSinAcentos () const; //HECHO Devuelve si el tokenizador pasa a minúsculas y sin acentos
+        bool DevolverPasarAminuscSinAcentos () const; //HECHO Devuelve si el tokenizador pasa a min?sculas y sin acentos
         bool DevolverAlmacenarPosTerm () const; //HECHO Devuelve el valor de almacenarPosTerm
-        string DevolverDirIndice () const;  // HECHO Devuelve ?directorioIndice? (el directorio del disco duro donde se almacenará el índice)
-        int DevolverTipoStemming () const; // HECHO Devolverá el tipo de stemming realizado en la indexación de acuerdo con el valor indicado en la variable privada ?tipoStemmer?
-        bool DevolverAlmEnDisco () const; // HECHO Devolverá el valor indicado en la variable privada ?almEnDisco? 
+        string DevolverDirIndice () const;  // HECHO Devuelve ?directorioIndice? (el directorio del disco duro donde se almacenar? el ?ndice)
+        int DevolverTipoStemming () const; // HECHO Devolver? el tipo de stemming realizado en la indexaci?n de acuerdo con el valor indicado en la variable privada ?tipoStemmer?
+        bool DevolverAlmEnDisco () const; // HECHO Devolver? el valor indicado en la variable privada ?almEnDisco? 
         void ListarInfColeccDocs() const; //HECHO Mostrar por pantalla: cout << informacionColeccionDocs << endl;
-        void ListarTerminos() const; // HECHO Mostrar por pantalla el contenido el contenido del campo privado ?índice?: cout << termino << ?\t? << InformacionTermino << endl;
+        void ListarTerminos() const; // HECHO Mostrar por pantalla el contenido el contenido del campo privado ??ndice?: cout << termino << ?\t? << InformacionTermino << endl;
         bool ListarTerminos(const string& nomDoc) const; //HECHO
         void ListarDocs() const; //HECHO Mostrar por pantalla el contenido el contenido del campo privado
         bool ListarDocs(const string& nomDoc) const; //HECHO
 
         private: 
-            bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &); //Método que usaremos para indexar términos que componen una pregunta  HECHO
-            string IndexarSubDirectorios(const string & secondDir);  //Método que usaremos para indexar los ficheros de los subdirectorios del fichero inicial
-            bool IndexarUnDocu(const char * to , InfDoc &); //HECHO Método para indexar un documento (Lo usaremos dentro del método de indexar documentos)
-            char * pasarAMinSin(char * word) const; //HECHO PARA PASAR A MINÚSCULAS UNA PALABRA
+            bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &); //M?todo que usaremos para indexar t?rminos que componen una pregunta  HECHO
+            string IndexarSubDirectorios(const string & secondDir);  //M?todo que usaremos para indexar los ficheros de los subdirectorios del fichero inicial
+            bool IndexarUnDocu(const char * to , InfDoc &); //HECHO M?todo para indexar un documento (Lo usaremos dentro del m?todo de indexar documentos)
+            char * pasarAMinSin(char * word) const; //HECHO PARA PASAR A MIN?SCULAS UNA PALABRA
             bool ReadPrivValuesMaps(); //HECHO
             bool ReadPrivValues1(); //HECHO
-            bool WriteStopWords() const ; // HECHOMétodo para escribir en el fichero HECHO 
-            void ReadStopWords( ); //HECHO Método para leer las palabras de parada del fichero HECHO
-            IndexadorHash(); //HECHO Este constructor se pone en la parte privada porque no se permitirá crear un indexador sin inicializarlo convenientemente. La inicialización la decidirá el alumno
-            unordered_map<string, InformacionTermino> indice; // Índice de términos indexados accesible por el término
-            unordered_map<string, InfDoc> indiceDocs; // Índice de documentos indexados accesible por el nombre del documento
-            InfColeccionDocs informacionColeccionDocs; // Información recogida de la colección de documentos indexada
-            string pregunta; // Pregunta indexada actualmente. Si no hay ninguna indexada, contendría el valor ??
-            unordered_map<string, InformacionTerminoPregunta> indicePregunta; // Índice de términos indexados en una pregunta. Se almacenará en memoria principal
-            InformacionPregunta infPregunta; // Información recogida de la pregunta indexada. Se almacenará en memoria principal
+            bool WriteStopWords() const ; // HECHOM?todo para escribir en el fichero HECHO 
+            void ReadStopWords( ); //HECHO M?todo para leer las palabras de parada del fichero HECHO
+            IndexadorHash(); //HECHO Este constructor se pone en la parte privada porque no se permitir? crear un indexador sin inicializarlo convenientemente. La inicializaci?n la decidir? el alumno
+            unordered_map<string, InformacionTermino> indice; // ?ndice de t?rminos indexados accesible por el t?rmino
+            unordered_map<string, InfDoc> indiceDocs; // ?ndice de documentos indexados accesible por el nombre del documento
+            InfColeccionDocs informacionColeccionDocs; // Informaci?n recogida de la colecci?n de documentos indexada
+            string pregunta; // Pregunta indexada actualmente. Si no hay ninguna indexada, contendr?a el valor ??
+            unordered_map<string, InformacionTerminoPregunta> indicePregunta; // ?ndice de t?rminos indexados en una pregunta. Se almacenar? en memoria principal
+            InformacionPregunta infPregunta; // Informaci?n recogida de la pregunta indexada. Se almacenar? en memoria principal
             unordered_set<string> stopWords; 
             string ficheroStopWords; // Nombre del fichero que contiene las palabras de parada
             string directorioIndice;
             Tokenizador tok; 
-            int tipoStemmer; // 0 = no se aplica stemmer: se indexa el término tal y como aparece tokenizado
-            // Los siguientes valores harán que los términos a indexar se les aplique el stemmer y se almacene solo dicho stem.
-            // 1 = stemmer de Porter para español
-            // 2 = stemmer de Porter para inglés  
+            int tipoStemmer; // 0 = no se aplica stemmer: se indexa el t?rmino tal y como aparece tokenizado
+            // Los siguientes valores har?n que los t?rminos a indexar se les aplique el stemmer y se almacene solo dicho stem.
+            // 1 = stemmer de Porter para espa?ol
+            // 2 = stemmer de Porter para ingl?s  
             bool almacenarEnDisco;
             bool almacenarPosTerm; 
             

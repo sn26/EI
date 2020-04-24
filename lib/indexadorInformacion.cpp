@@ -214,7 +214,7 @@ const long int InfDoc::getIdDoc(){ return this->idDoc;  }
 void InfDoc::setIdDoc(const long int &idDoc){this->idDoc = idDoc; }
 const int InfDoc::getNumPal(){return this->numPal;}
 void InfDoc::setNumPal(const int &numPal){this->numPal = numPal;}
-void InfDoc::setTamBytes(const int &tam ){this->tamBytes = tamBytes;}
+void InfDoc::setTamBytes(const int &tam ){this->tamBytes = tam;}
 const int InfDoc::getTamBytes(){return this->tamBytes;}
 const int InfDoc::getNumPalSinParada(){return this->numPalSinParada; }
 void InfDoc::setNumPalSinParada(const int & numPalSinParada) {this->numPalSinParada = numPalSinParada;}
