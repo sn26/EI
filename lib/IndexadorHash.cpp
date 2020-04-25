@@ -261,7 +261,7 @@ bool IndexadorHash::GuardarIndexacion() const{
 
 
 bool IndexadorHash::ReadPrivValuesMaps() {
-     ifstream file;
+    ifstream file;
     string cadena;
     string fichero = this->directorioIndice+ "/PrivValuesMaps.txt"; 
     file.open(fichero.c_str());
@@ -276,15 +276,18 @@ bool IndexadorHash::ReadPrivValuesMaps() {
     p.clear();
     p= "";
     //vamos a configurar el tokenizador para sperar cada una de las dos cosas que componen el mapa
+    string *copiaDel  = new string();
+    *copiaDel= this->tok.DelimitadoresPalabra();
+    bool *copiaEspeciales = new bool();
+    *copiaEspeciales= this->tok.CasosEspeciales();
+    bool *pasarAMinSin = new bool();
+    *pasarAMinSin = this->tok.PasarAminuscSinAcentos();
     tok.DelimitadoresPalabra("\t ");//Para tokenizar los indices
 	tok.CasosEspeciales(false);
 	tok.PasarAminuscSinAcentos(true);
-    unordered_map<string , InformacionTermino> totalIndice;
-    unordered_map<string , InfDoc> indiceDocsCopia; 
-    unordered_map<string , InformacionTerminoPregunta> totalIndicePregunta;
-    totalIndice.clear();indiceDocsCopia.clear(); totalIndicePregunta.clear();
     list<string> res; 
     while(std::getline(f,to,'\n')){
+        res.clear();
         if(to.find("INDICE")==string::npos && to.find("INDICEDOCS")==string::npos && to.find("INDICEPREGUNTA")==string::npos){//SI NO ESTAMOS CAMBIANDO ENTRE UNO Y OTRO
             if(p=="INDICE"){//CUANDO ESTAMOS EN EL PRIMERO
                 string it1 = ""; //Primera parte del conjunto (string)
@@ -294,57 +297,72 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                     string p = "\t";
                     it2 = to.substr(to.find("\t") + p.length());
                 } 
-                if(it2!=""){
-                    InformacionTermino itCopia = InformacionTermino();         
-                    vector<list<int>> InfTermDocLista; 
+                if(it2!=""){      
+                    //cout<<"LA CADENA QUE VAMOS A INDEXAR PARA "<<it1<<" es "<<it2<<endl;
+                    InformacionTermino *actualTerm = new InformacionTermino(); 
+                    list<int> InfTermDocLista; 
                     list<int> ftInfTermDocs; 
-                    int iteration=-1; //No hay ninguna iteraci?n al principio disponible
-                    list<long int> idsDocs; 
+                    list<long int> idsDocs;
+                    unordered_map<long int , InfTermDoc> entero; 
+                    unordered_map<long int , std::pair<int , list<int>>> listaCompleta;
                     tok.Tokenizar(it2,res);//AS? SACAREMOS CADA UNA DE LAS PARTES QUE NECESITAMOS
+                    //cout<<"CADENA "<<it2<<endl;
 			        for(list<string>::iterator iter= res.begin();iter!= res.end();++iter){
-                        
-                        if(*iter!="ft:" && *iter!="Frecuencia total:" && *iter!="fd:" && *iter!="Id.Doc:"){ InfTermDocLista[iteration].push_back(std::stoi(*iter)); }//CUANDO NOS ENCONTRAMOS N?MEROS (ESTAMOS AL FINAL)
+                        if(*iter!="ft:" && *iter!="frecuencia" && *iter!="total:" && *iter!="fd:" && *iter!="id.doc:"){ //CUANDO NOS ENCONTRAMOS N?MEROS (ESTAMOS AL FINAL)
+                           for( auto iter2= iter ; iter2!=res.end() ; iter2++){
+                               iter=iter2;
+                               if(*iter2!="ft:" && *iter2!="frecuencia" && *iter2!="total:" && *iter2!="fd:" && *iter2!="id.doc:"){
+                                    InfTermDocLista.push_back(std::stoi(*iter2));
+                               }else break;
+                           } 
+                            
+                        }
+                        if(idsDocs.size() >=1 && InfTermDocLista.size()>=1 ){
+                            auto iterator = idsDocs.begin(); 
+                            auto iteratorFt= ftInfTermDocs.begin();
+                            std::pair< int , list<int>> copia (*iteratorFt, InfTermDocLista); 
+                            std::pair<long int , std::pair<int , list<int>>> entero (*iterator , copia ); //<id , ft , list<Int> posTerm>
+                            listaCompleta.insert(entero);
+                            //idsDocs.clear();
+                            InfTermDocLista.clear();
+                            //ftInfTermDocs.clear();
+                        }
                         if(*iter=="ft:"){//Cuando entramos al final de la cadena
                             iter++; 
+                            ftInfTermDocs.clear();
                             ftInfTermDocs.push_back(std::stol(*iter));    
                         }
-                        if(*iter == "Frecuencia total:"){//Sacaremos la frecuencia del doc
+                        if(*iter == "total:"){//Sacaremos la frecuencia del doc
                             iter++;
-                            itCopia.setFtc(std::stoi(*iter));
+                            actualTerm->setFtc(std::stoi(*iter));
+                            actualTerm->setFt(std::stoi(*iter));
                         }
                         if(*iter=="fd:"){//Sacamaos la frecuencia del documento
                             iter++; 
-                            itCopia.setFd(std::stoi(*iter));
+                            actualTerm->setFd(std::stoi(*iter));
                         }
-                        if(*iter == "Id.Doc:"){//Sacamos el id del documento que va en el unordered map
+                        if(*iter == "id.doc:"){//Sacamos el id del documento que va en el unordered map
                             iter++; 
-                            iteration++; 
+                            idsDocs.clear();
                             idsDocs.push_back(std::stol(*iter)); 
                         }
                     }
-                    //Cuando ya hemos salido del bucle, podremos pasar a crear los objetos que nos faltan
-                    iteration = -1; 
-                    std::list<long int>::iterator it = idsDocs.begin();
-                    unordered_map<long int , InfTermDoc> aMeterMap; 
-                    std::list<int>::iterator iftDs = ftInfTermDocs.begin();
-                    for (; it != idsDocs.end() && iftDs != ftInfTermDocs.end() ; ++it , ++iftDs){//Haremos un bucle que recorra cada idDoc, que coincidir? con el n?mero de fts
-                        InfTermDoc infTermCopia = InfTermDoc(); 
-                        infTermCopia.setFt(*iftDs);
-                        iteration++;
-                        //Vamos a llenar la lista del postTerm y a meterla 
-                        list<int> PosTerms;
-                        for( std::list<int>::iterator itPosTerm =InfTermDocLista[iteration].begin(); itPosTerm!= InfTermDocLista[iteration].end() ; ++itPosTerm) PosTerms.push_back(*itPosTerm);
-                        //Metemos la lista en la copia 
-                        infTermCopia.setPosTerm(PosTerms);
-                        std::pair<long int ,InfTermDoc> c1(*it , infTermCopia );
-                        aMeterMap.insert(c1);
-                    }   
-                    //Una vez que tenemos el unordered_map, ya lo podemos meter en el InformacionTermino
-                    itCopia.setL_docs(aMeterMap);
-                    //Creamos el para y lo metemos en el ?ndice
-                    std::pair<string , InformacionTermino> parejaFinal (it1 , itCopia);
-                    //Le metemos en el total
-                    totalIndice.insert(parejaFinal);
+                    unordered_map <long int , InfTermDoc > l_docs; 
+                    //Una vez fuera del bucle, crearemos el término 
+                    for(auto iterator = listaCompleta.begin() ; iterator!= listaCompleta.end() ; iterator ++){
+                        InfTermDoc *act = new InfTermDoc(); 
+                        act->setFt(iterator->second.first); 
+                        act->setPosTerm(iterator->second.second);
+                        std::pair<long int , InfTermDoc> parejaAct (iterator->first ,*act);
+                        l_docs.insert(parejaAct); 
+                        delete act;
+                    }
+                    //Una vez tengamos el l_docs
+                    actualTerm->setL_docs(l_docs);
+                    //Lo meteremos en el índice
+                    std::pair<string , InformacionTermino> term (it1 , *actualTerm);
+                    this->indice.insert(term);
+                    delete actualTerm;
                 }
             }
             if(p=="INDICEDOCS"){//CUANDO ESTAMOS EN EL PRIMERO
@@ -354,20 +372,22 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                     it1 = to.substr(0, to.find("\t"));
                     string p = "\t";
                     it2 = to.substr(to.find("\t") + p.length());
+                    //cout<<"Mi it2 de INDICEDOCS es "<<it2<<endl;
                 } 
                 if(it2!=""){
                     InfDoc itCopia = InfDoc();         
                     tok.Tokenizar(it2,res);//AS? SACAREMOS CADA UNA DE LAS PARTES QUE NECESITAMOS
+                
 			        for(list<string>::iterator iter= res.begin();iter!= res.end();++iter){
-                        if(*iter=="idDoc:"){ iter++;  itCopia.setIdDoc(std::stol(*iter));    }
-                        if(*iter == "numPal:"){ iter++; itCopia.setNumPal(std::stoi(*iter));}
-                        if(*iter=="numPalSinParada:"){ iter++; itCopia.setNumPalSinParada(std::stoi(*iter));}
-                        if(*iter == "numPalDiferentes:"){ iter++; itCopia.setNumPalDiferentes(std::stoi(*iter)); }
-                        if(*iter=="tamBytes:"){ iter++; itCopia.setTamBytes(std::stoi(*iter)); }
+                        if(*iter=="iddoc:"){ iter++;  itCopia.setIdDoc(std::stol(*iter));    }
+                        if(*iter == "numpal:"){ iter++; itCopia.setNumPal(std::stoi(*iter));}
+                        if(*iter=="numalsinparada:"){ iter++; itCopia.setNumPalSinParada(std::stoi(*iter));}
+                        if(*iter == "numpaldiferentes:"){ iter++; itCopia.setNumPalDiferentes(std::stoi(*iter)); }
+                        if(*iter=="tambytes:"){ iter++; itCopia.setTamBytes(std::stoi(*iter)); }
                     }
                     std::pair<string , InfDoc> parejaFinal (it1 , itCopia);
                     //Le metemos en el total
-                    indiceDocsCopia.insert(parejaFinal);
+                    this->indiceDocs.insert(parejaFinal);
                 }
             }
             if(p=="INDICEPREGUNTA"){
@@ -393,7 +413,7 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                     itCopia.setPosTerm(posTerms);
                     std::pair<string , InformacionTerminoPregunta> parejaFinal (it1 , itCopia);
                     //Le metemos en el total
-                    totalIndicePregunta.insert(parejaFinal);
+                    this->indicePregunta.insert(parejaFinal);
                 }
             }
         }
@@ -402,15 +422,14 @@ bool IndexadorHash::ReadPrivValuesMaps() {
         if(to.find("INDICEDOCS")!=string::npos) p = "INDICEDOCS";
         if(to.find("INDICEPREGUNTA")!=string::npos) p = "INDICEPREGUNTA";
     }
-    //AHORA METEREMOS LOS ?NDICES
-    this->indice = totalIndice;
-    this->indiceDocs = indiceDocsCopia;
-    this->indicePregunta = totalIndicePregunta;
+    this->tok.DelimitadoresPalabra(*copiaDel);
+    this->tok.PasarAminuscSinAcentos(*pasarAMinSin);
+    this->tok.CasosEspeciales(*copiaEspeciales);
+    delete copiaDel;
+    delete copiaEspeciales;
+    delete pasarAMinSin;
     file.close(); 
     f.close();
-    totalIndice.clear(); 
-    indiceDocsCopia.clear(); 
-    totalIndicePregunta.clear();
     p.clear();
 
     return true;
@@ -512,8 +531,10 @@ bool IndexadorHash::ReadPrivValues1() {
         }
         p.clear();      
     }
+
     f.close();
     file.close();
+    return true;
 }
 
 IndexadorHash::IndexadorHash(const string& directorioIndexacion){
@@ -1234,7 +1255,7 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
                     try{
                         if(!IndexarUnDocu(const_cast<char *>(copia->first.c_str())  , copia->second )) return true; 
                     }catch(...){
-                        cerr << "ERROR: No hay espacio suficiente en memoria para la indexaci?n"<<endl;
+                        cerr << "ERROR: No hay espacio suficiente en memoria para la indexación"<<endl;
                         return false; 
                     }
                     break; 
