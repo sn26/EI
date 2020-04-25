@@ -191,17 +191,17 @@ bool IndexadorHash::GuardarIndexacion() const{
         buffer.append("\n");
         buffer.append("ICDDNumTotalPal");  buffer.append(to_string(informacionColeccionDocs.getNumTotalPal()));
         buffer.append("\n"); 
-        buffer.append("ICDDNumTotalPalSinParada"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalSinParada())); 
+        buffer.append("ICDDNumSinParada"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalSinParada())); 
         buffer.append("\n");
-        buffer.append("ICDDNumTotalPalDiferentes"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalDiferentes()));
+        buffer.append("ICDDNumDiferentes"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalDiferentes()));
         buffer.append("\n");
         buffer.append("ICDDTamBytes"); buffer.append(to_string(informacionColeccionDocs.getTamBytes()));
         buffer.append("\n");
         buffer.append("INFPREGNumTotalPal"); buffer.append(to_string(infPregunta.getNumTotalPal())); 
         buffer.append("\n");
-        buffer.append("INFPREGTotalPalDiferentes"); buffer.append(to_string( infPregunta.getNumTotalPalDiferentes())); 
+        buffer.append("INFPREGDiferentes"); buffer.append(to_string( infPregunta.getNumTotalPalDiferentes())); 
         buffer.append("\n"); 
-        buffer.append("INFPREGTotalPalSinParada"); buffer.append( to_string(infPregunta.getNumTotalPalSinParada())); 
+        buffer.append("INFPREGSinParada"); buffer.append( to_string(infPregunta.getNumTotalPalSinParada())); 
         std::ofstream i(this->directorioIndice + "/PrivValues1.txt" );
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio " <<this->directorioIndice<< " el archivo de guardado del disco: PrivValues1.txt" << endl;
@@ -424,7 +424,7 @@ bool IndexadorHash::ReadPrivValues1() {
     string fichero = this->directorioIndice+ "/PrivValues1.txt"; 
     file.open(fichero.c_str());
     if(!file) {
-        cerr << "ERROR: No existe el archivo: " << fichero << " En el directorio "<<this->directorioIndice<< endl;
+        //cerr << "ERROR: No existe el archivo: " << fichero << " En el directorio "<<this->directorioIndice<< endl;
         return false; 
     }
     std::ifstream f(fichero.c_str());
@@ -442,7 +442,7 @@ bool IndexadorHash::ReadPrivValues1() {
             this->ficheroStopWords.clear();
             this->ficheroStopWords= to.substr(to.find(p)+p.length() ); 
         }
-        /*if(to.find("tipoStemmer") != string::npos) { 
+        if(to.find("tipoStemmer") != string::npos) { 
             p = "tipoStemmer"; 
             this->tipoStemmer= std::stoi(to.substr(to.find(p)+p.length() ));
         }
@@ -486,12 +486,12 @@ bool IndexadorHash::ReadPrivValues1() {
             p = "ICDDNumTotalPal"; 
             this->informacionColeccionDocs.setNumTotalPal(std::stol(to.substr(to.find(p)+p.length() )));
         }
-        if(to.find("ICDDNumTotalPalSinParada") != string::npos) { 
-            p = "ICDDNumTotalPalSinParada"; 
+        if(to.find("ICDDNumSinParada") != string::npos) { 
+            p = "ICDDNumSinParada"; 
             this->informacionColeccionDocs.setNumTotalPalSinParada(std::stol(to.substr(to.find(p)+p.length() )));
         }
-        if(to.find("ICDDNumTotalPalDiferentes") != string::npos) { 
-            p = "ICDDNumTotalPalDiferentes"; 
+        if(to.find("ICDDNumDiferentes") != string::npos) { 
+            p = "ICDDNumDiferentes"; 
             this->informacionColeccionDocs.setNumTotalPalDiferentes(std::stol(to.substr(to.find(p)+p.length() )));
         }
         if(to.find("ICDDTamBytes") != string::npos) { 
@@ -502,14 +502,14 @@ bool IndexadorHash::ReadPrivValues1() {
             p = "INFPREGNumTotalPal"; 
             this->infPregunta.setNumTotalPal(std::stol(to.substr(to.find(p)+p.length() )));
         }
-        if(to.find("INFPREGTotalPalDiferentes") != string::npos) { 
-            p = "INFPREGTotalPalDiferentes"; 
+        if(to.find("INFPREGDiferentes") != string::npos) { 
+            p = "INFPREGDiferentes"; 
             this->infPregunta.setNumTotalPalDiferentes(std::stol(to.substr(to.find(p)+p.length() )));
         }
-        if(to.find("INFPREGTotalPalSinParada") != string::npos) { 
-            p = "INFPREGTotalPalSinParada"; 
+        if(to.find("INFPREGSinParada") != string::npos) { 
+            p = "INFPREGSinParada"; 
             this->infPregunta.setNumTotalPalSinParada(std::stol(to.substr(to.find(p)+p.length() )));
-        }*/
+        }
         p.clear();      
     }
     f.close();
@@ -535,6 +535,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
             this->pregunta=""; 
             this->tok = Tokenizador(); 
             this->tok.CasosEspeciales(false);
+            this->tok.PasarAminuscSinAcentos(true);
             this->tok.DelimitadoresPalabra(" "); 
             this->ficheroStopWords="";
             this->tipoStemmer= 0; 

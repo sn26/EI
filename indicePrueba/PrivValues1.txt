@@ -8,9 +8,9 @@ TOKPasarAMinSin1
 TOKCasosEspeciales0
 ICDDNumDocs2
 ICDDNumTotalPal11
-ICDDNumTotalPalSinParada7
-ICDDNumTotalPalDiferentes4
+ICDDNumSinParada7
+ICDDNumDiferentes4
 ICDDTamBytes53
 INFPREGNumTotalPal0
-INFPREGTotalPalDiferentes0
-INFPREGTotalPalSinParada0
+INFPREGDiferentes0
+INFPREGSinParada0
