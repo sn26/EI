@@ -175,33 +175,33 @@ bool IndexadorHash::GuardarIndexacion() const{
         buffer.append("\n");
         buffer.append("FicheroStopWords" + this->ficheroStopWords);    
         buffer.append("\n");
-        buffer.append("tipoStemmer" + this->tipoStemmer);   
+        buffer.append("tipoStemmer"); buffer.append(to_string(this->tipoStemmer));   
         buffer.append("\n");
-        buffer.append("Almacena en disco" + this->almacenarEnDisco);    
+        buffer.append("Almacena en disco"); buffer.append(to_string( this->almacenarEnDisco));    
         buffer.append("\n");
-        buffer.append("Almacena posTerm" + this->almacenarPosTerm);   
+        buffer.append("Almacena posTerm"); buffer.append(to_string(this->almacenarPosTerm));   
         buffer.append("\n");
-        buffer.append("TOKDelimiters" + this->tok.DelimitadoresPalabra());  
+        buffer.append("TOKDelimiters"); buffer.append(this->tok.DelimitadoresPalabra());  
         buffer.append("\n");
-        buffer.append("TOKPasarAMinSin" + this->tok.PasarAminuscSinAcentos());  
+        buffer.append("TOKPasarAMinSin");buffer.append(to_string(this->tok.PasarAminuscSinAcentos()));  
         buffer.append("\n");
-        buffer.append("TOKCasosEspeciales" + this->tok.CasosEspeciales());  
+        buffer.append("TOKCasosEspeciales"); buffer.append(to_string(this->tok.CasosEspeciales()));  
         buffer.append("\n");
-        buffer.append("ICDDNumDocs" + informacionColeccionDocs.getNumDocs());
+        buffer.append("ICDDNumDocs");  buffer.append(to_string(informacionColeccionDocs.getNumDocs()));
         buffer.append("\n");
-        buffer.append("ICDDNumTotalPal"+ informacionColeccionDocs.getNumTotalPal());
+        buffer.append("ICDDNumTotalPal");  buffer.append(to_string(informacionColeccionDocs.getNumTotalPal()));
         buffer.append("\n"); 
-        buffer.append("ICDDNumTotalPalSinParada" + informacionColeccionDocs.getNumTotalPalSinParada()); 
+        buffer.append("ICDDNumTotalPalSinParada"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalSinParada())); 
         buffer.append("\n");
-        buffer.append("ICDDNumTotalPalDiferentes" + informacionColeccionDocs.getNumTotalPalDiferentes());
+        buffer.append("ICDDNumTotalPalDiferentes"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalDiferentes()));
         buffer.append("\n");
-        buffer.append("ICDDTamBytes" + informacionColeccionDocs.getTamBytes());
+        buffer.append("ICDDTamBytes"); buffer.append(to_string(informacionColeccionDocs.getTamBytes()));
         buffer.append("\n");
-        buffer.append("INFPREGNumTotalPal" + infPregunta.getNumTotalPal()); 
+        buffer.append("INFPREGNumTotalPal"); buffer.append(to_string(infPregunta.getNumTotalPal())); 
         buffer.append("\n");
-        buffer.append("INFPREGTotalPalDiferentes" + infPregunta.getNumTotalPalDiferentes()); 
+        buffer.append("INFPREGTotalPalDiferentes"); buffer.append(to_string( infPregunta.getNumTotalPalDiferentes())); 
         buffer.append("\n"); 
-        buffer.append("INFPREGTotalPalSinParada" + infPregunta.getNumTotalPalSinParada()); 
+        buffer.append("INFPREGTotalPalSinParada"); buffer.append( to_string(infPregunta.getNumTotalPalSinParada())); 
         std::ofstream i(this->directorioIndice + "/PrivValues1.txt" );
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio " <<this->directorioIndice<< " el archivo de guardado del disco: PrivValues1.txt" << endl;
@@ -217,15 +217,15 @@ bool IndexadorHash::GuardarIndexacion() const{
         o<<"INDICE\n";
         for ( auto it = this->indice.begin(); it != this->indice.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n'; }
         o<<"INDICEDOCS\n";
-        buffer= o.str();
-        o.clear(); 
+        //buffer= o.str();
+        //o.clear(); 
         for ( auto it = this->indiceDocs.begin(); it != this->indiceDocs.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n';}
         o<<"INDICEPREGUNTA\n";
-        buffer= buffer + o.str();
-        o.clear(); 
+        //buffer= buffer + o.str();
+        //o.clear(); 
         for ( auto it = this->indicePregunta.begin(); it != this->indicePregunta.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n'; }
         buffer= buffer + o.str();
-        o.clear(); 
+        //o.clear(); 
         i.open(this->directorioIndice + "/PrivValuesMaps.txt");
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio "<<this->directorioIndice<< " el archivo de guardado del disco: PrivValuesMaps.txt" << endl;
@@ -442,7 +442,7 @@ bool IndexadorHash::ReadPrivValues1() {
             this->ficheroStopWords.clear();
             this->ficheroStopWords= to.substr(to.find(p)+p.length() ); 
         }
-        if(to.find("tipoStemmer") != string::npos) { 
+        /*if(to.find("tipoStemmer") != string::npos) { 
             p = "tipoStemmer"; 
             this->tipoStemmer= std::stoi(to.substr(to.find(p)+p.length() ));
         }
@@ -509,7 +509,7 @@ bool IndexadorHash::ReadPrivValues1() {
         if(to.find("INFPREGTotalPalSinParada") != string::npos) { 
             p = "INFPREGTotalPalSinParada"; 
             this->infPregunta.setNumTotalPalSinParada(std::stol(to.substr(to.find(p)+p.length() )));
-        }
+        }*/
         p.clear();      
     }
     f.close();
@@ -542,7 +542,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
             this->almacenarPosTerm=false;
         }
     }catch(...){
-        cerr<<"Los par?metros que se han introducido no son correctos y no se ha podido generar el objeto de indexaci?n"<<endl;
+        cerr<<"Los datos del archivo PrivValues1 no son correctos"<<endl;
         return; 
     }
     try{
@@ -557,7 +557,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
             return;
         }
     }catch(...){
-        cerr<<"Los par?metros que se han introducido no son correctos y no se ha podido generar el objeto de indexaci?n"<<endl;
+        cerr<<"Los datos del archivo PrivValuesMaps no son correctos"<<endl;
         return; 
     } 
     
@@ -1007,13 +1007,14 @@ bool IndexadorHash::Borra(const string& word){
  * */
 bool IndexadorHash::BorraDoc(const string& nomDoc){
     //Primero miraremos si tenemos el documento indexado 
-    for(std::pair<std::string, InfDoc > it: this->indiceDocs) {
-        if(it.first == nomDoc){//Si es el mismo documento
+    for(auto it1 = this->indiceDocs.begin() ; it1 != this->indiceDocs.end() ;  it1++) {
+        if(it1->first == nomDoc){//Si es el mismo documento
             //Tendremos que coger su id y borrarlo de todos los ?ndices que lo contengan 
-            for(auto it2 = this->indice.begin() ; it2!= this->indice.end() ; it2++){
+            for(auto it2 = this->indice.begin() ; it2!= this->indice.end() ;it2++ ){
                 //Tendremos que mirar si contienen el id 
-                for(auto it3 = it2->second.getL_docs().begin() ; it3!= it2->second.getL_docs().end() ; it2++) {
-                    if(it3->first == it.second.getIdDoc()){ // Si coinciden los ids del documento
+                //cout<<"VOY A MIRAR EL TERM  "<<it2->first<<endl;
+                for(auto it3 = it2->second.getL_docs().begin() ; it3!= it2->second.getL_docs().end() ; it3++) {
+                    if(it3->first == it1->second.getIdDoc()){ // Si coinciden los ids del documento
                         //Tendremos que actualizar las frecuencias
                         it2->second.setFd(it2->second.getFd() -1 ); 
                         it2->second.setFtc(it2->second.getFtc() - it3->second.getFt());
@@ -1022,24 +1023,30 @@ bool IndexadorHash::BorraDoc(const string& nomDoc){
                         unordered_map<long int , InfTermDoc > copia = it2->second.getL_docs();
                         copia.erase(it3->first);
                         it2->second.setL_docs(copia); 
+                    
                         if(it2->second.getL_docs().size()==0){
+                            //cout<<"ESTOY ENTRANDO Y MI TAM DEL INDICE ES "<<this->indice.size()<<"Y VOY A BORRAR "<<it2->first<<endl;
                             this->indice.erase(it2->first);
+                            it2 = this->indice.begin(); 
+                            //cout<<"ESTOY SALIENDO Y MI TAM DEL INDICE ES "<<this->indice.size()<<endl;
                         }
                         break; 
                     }
 
                 } 
                 
+                
             }
             //Ahora borraremos el documento
             
-	        informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()-it.second.getTamBytes());
-		    informacionColeccionDocs.setNumTotalPal(informacionColeccionDocs.getNumTotalPal()-it.second.getNumPal());
-		    informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()-it.second.getNumPalSinParada());
-		    informacionColeccionDocs.setNumTotalPalDiferentes(informacionColeccionDocs.getNumTotalPalDiferentes()-it.second.getNumPalDiferentes());
-            this->indiceDocs.erase(it.first);
-            informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs()-1);
-            return true; 
+	        this->informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()-it1->second.getTamBytes());
+		    this->informacionColeccionDocs.setNumTotalPal(informacionColeccionDocs.getNumTotalPal()-it1->second.getNumPal());
+		    this->informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()-it1->second.getNumPalSinParada());
+		    this->informacionColeccionDocs.setNumTotalPalDiferentes(indice.size()); //ALGO NO FUNCIONA 
+            this->informacionColeccionDocs.setNumDocs(informacionColeccionDocs.getNumDocs()-1);
+            this->indiceDocs.erase(it1->first);
+            return true;
+            
         }
     }
     return false;
@@ -1083,6 +1090,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
     elNuevo->setFt(0);
     //Iremos por cada token creado en el archivo
     while(std::getline(f,to,'\n')){
+        if(to=="" ||to ==" " ) break;
         bool eraPalabraParada= false;
         for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
             if(*iterator == to){ //Hemos encontrado una stopWord
@@ -1131,12 +1139,9 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
                         //Ahora, meteremos el par dentro del iterador
                         std::pair<long int , InfTermDoc > added (actual.getIdDoc() , *elNuevo); 
                         unordered_map<long int , InfTermDoc> copia2 = iterator->second.getL_docs(); 
-                       
                         copia2.insert(added);
                         iterator->second.setL_docs(copia2);
-
                     }
-                    
                     break; 
                 }
             }
@@ -1188,9 +1193,6 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
     informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
     file.close();    
     return true; 
-    //}
-    //return false; 
-
 }
 
 /**
@@ -1236,7 +1238,6 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
                     }
                     break; 
                 }
-                //break;
             } 
         }
         if(!estabaIndexado){

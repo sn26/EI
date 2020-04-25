@@ -1,16 +1,16 @@
 PreguntaIndexada
 FicheroStopWords./StopWordsEspanyol.txt
-tipoStemmer
-Almacena en disco
-lmacena posTerm
+tipoStemmer0
+Almacena en disco0
+Almacena posTerm1
 TOKDelimiters. ,:
-OKPasarAMinSin
-TOKCasosEspeciales
-DDNumDocs
-lPal
-TotalPalSinParada
-NumTotalPalDiferentes
-ntes
-INFPREGNumTotalPal
-INFPREGTotalPalDiferentes
-INFPREGTotalPalSinParada
+TOKPasarAMinSin1
+TOKCasosEspeciales0
+ICDDNumDocs2
+ICDDNumTotalPal11
+ICDDNumTotalPalSinParada7
+ICDDNumTotalPalDiferentes4
+ICDDTamBytes53
+INFPREGNumTotalPal0
+INFPREGTotalPalDiferentes0
+INFPREGTotalPalSinParada0
