@@ -1077,8 +1077,10 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
     std::string to; 
     actual.setTamBytes( properties.st_size); //Ponemos el tama?o de los bytes
     actual.setNumPal(0); actual.setNumPalSinParada(0); actual.setNumPalDiferentes(0); 
-    InfTermDoc elNuevo = InfTermDoc(); 
-    elNuevo.setFt(0);
+    InfTermDoc *elNuevo;
+    //elnuevoInfTermDoc();
+    elNuevo = new InfTermDoc();
+    elNuevo->setFt(0);
     //Iremos por cada token creado en el archivo
     while(std::getline(f,to,'\n')){
         bool eraPalabraParada= false;
@@ -1103,20 +1105,38 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
             bool encontradoEnIndice = false; 
             for( auto iterator = this->indice.begin() ; iterator!= indice.end() ; iterator ++){
                 if(iterator->first == to ){ //NOS HEMOS ENCONTRADO CON LA CADENA YA PREVIAMENTE INDEXADA POR OTRO DOCUMENTO 
+                    bool existeYaId = false;
+                    encontradoEnIndice = true; 
                     iterator->second.setFtc(iterator->second.getFtc() +1 );
                     iterator->second.setFt(iterator->second.getFt() + 1 );
-                    elNuevo.setFt(elNuevo.getFt() + 1 );
-                    if( this->almacenarPosTerm ==true ) { //Si tenemos que almacenar las posiciones
-                        list<int> copia = elNuevo.getPosTerm(); 
-                        copia.push_back(actual.getNumPal());//Metemos el n?mero de palabras que nos hemos encontrado
-                        elNuevo.setPosTerm(copia);
+                    for(auto iterator2 = iterator->second.getL_docs().begin() ; iterator2 != iterator->second.getL_docs().end() ; iterator2 ++){
+                        if(iterator2->first == actual.getIdDoc() ){
+                            if(this->almacenarPosTerm==true ){
+                                list<int> copia = iterator2->second.getPosTerm(); 
+                                copia.push_back(actual.getNumPal());
+                                iterator2->second.setPosTerm(copia);
+                            }
+                            iterator2->second.setFt(iterator2->second.getFt() + 1 );
+                            existeYaId = true; 
+                            break; 
+                        }      
                     }
-                    //Ahora, meteremos el par dentro del iterador
-                    std::pair<long int , InfTermDoc > added (actual.getIdDoc() , elNuevo); 
-                    unordered_map<long int , InfTermDoc> copia = iterator->second.getL_docs(); 
-                    copia.insert(added);
-                    iterator->second.setL_docs(copia);
-                    encontradoEnIndice = true; 
+                    if(!existeYaId){
+                        elNuevo->setFt(elNuevo->getFt() + 1 );
+                        if(this->almacenarPosTerm == true ){
+                            list<int> copia= elNuevo->getPosTerm();
+                            copia.push_back(actual.getNumPal());
+                            elNuevo->setPosTerm(copia);
+                        }
+                        //Ahora, meteremos el par dentro del iterador
+                        std::pair<long int , InfTermDoc > added (actual.getIdDoc() , *elNuevo); 
+                        unordered_map<long int , InfTermDoc> copia2 = iterator->second.getL_docs(); 
+                       
+                        copia2.insert(added);
+                        iterator->second.setL_docs(copia2);
+
+                    }
+                    
                     break; 
                 }
             }
@@ -1125,14 +1145,14 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual){
                 InformacionTermino nuevoTermino = InformacionTermino(); 
                 nuevoTermino.setFt(1); 
                 nuevoTermino.setFtc(1);
-                elNuevo.setFt(1);
+                elNuevo->setFt(1);
                 if(almacenarPosTerm == true){
-                    list<int> copia = elNuevo.getPosTerm(); 
+                    list<int> copia = elNuevo->getPosTerm(); 
                     copia.push_back(actual.getNumPal());//Metemos el n?mero de palabras que nos hemos encontrado
-                    elNuevo.setPosTerm(copia);
+                    elNuevo->setPosTerm(copia);
                 }
                 //Crearemos un par para a?adir al ?ndice
-                std::pair<long int , InfTermDoc > added (actual.getIdDoc() , elNuevo); 
+                std::pair<long int , InfTermDoc > added (actual.getIdDoc() , *elNuevo); 
                 unordered_map<long int , InfTermDoc> listaNueva;
                 listaNueva.insert(added);
                 nuevoTermino.setL_docs(listaNueva);
