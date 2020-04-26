@@ -88,8 +88,8 @@ class IndexadorHash {
 
         private: 
             bool IndexarUnTermPregunta( const string & , InformacionTerminoPregunta &); //M?todo que usaremos para indexar t?rminos que componen una pregunta  HECHO
-            string IndexarSubDirectorios(const string & secondDir);  //M?todo que usaremos para indexar los ficheros de los subdirectorios del fichero inicial
-            bool IndexarUnDocu(const char * to , InfDoc &); //HECHO M?todo para indexar un documento (Lo usaremos dentro del m?todo de indexar documentos)
+            //string IndexarSubDirectorios(const string & secondDir);  //M?todo que usaremos para indexar los ficheros de los subdirectorios del fichero inicial
+            bool IndexarUnDocu(const char * to , InfDoc & , list<string> * palabras); //HECHO M?todo para indexar un documento (Lo usaremos dentro del m?todo de indexar documentos)
             char * pasarAMinSin(char * word) const; //HECHO PARA PASAR A MIN?SCULAS UNA PALABRA
             bool ReadPrivValuesMaps(); //HECHO
             bool ReadPrivValues1(); //HECHO
