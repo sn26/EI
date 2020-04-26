@@ -300,8 +300,9 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                     unordered_map<long int , InfTermDoc> entero; 
                     unordered_map<long int , std::pair<int , list<int>>> listaCompleta;
                     tok.Tokenizar(it2,res);//AS? SACAREMOS CADA UNA DE LAS PARTES QUE NECESITAMOS
+                    
 			        for(list<string>::iterator iter= res.begin();iter!= res.end();++iter){
-                        if(*iter!="ft:" && *iter!="frecuencia" && *iter!="total:" && *iter!="fd:" && *iter!="id.doc:"){ //CUANDO NOS ENCONTRAMOS N?MEROS (ESTAMOS AL FINAL)
+                        if(*iter!="ft:" && *iter!="frecuencia" && *iter!="total:" && *iter!="fd:" && *iter!="id.doc:" && this->almacenarPosTerm==true){ //CUANDO NOS ENCONTRAMOS N?MEROS (ESTAMOS AL FINAL)
                            for( auto iter2= iter ; iter2!=res.end() ; iter2++){
                                iter=iter2;
                                if(*iter2!="ft:" && *iter2!="frecuencia" && *iter2!="total:" && *iter2!="fd:" && *iter2!="id.doc:"){
@@ -310,19 +311,19 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                            } 
                             
                         }
-                        if(idsDocs.size() >=1 && InfTermDocLista.size()>=1 ){
+                        if(idsDocs.size() >=1 && this->almacenarPosTerm==true && InfTermDocLista.size()>=1 ){
                             auto iterator = idsDocs.begin(); 
                             auto iteratorFt= ftInfTermDocs.begin();
+                            //if(InfTermDocLista.size()>=1 && this->almacenarPosTerm== true ){
                             std::pair< int , list<int>> copia (*iteratorFt, InfTermDocLista); 
                             std::pair<long int , std::pair<int , list<int>>> entero (*iterator , copia ); //<id , ft , list<Int> posTerm>
                             listaCompleta.insert(entero);
-                            //idsDocs.clear();
                             InfTermDocLista.clear();
-                            //ftInfTermDocs.clear();
+                            //}
                         }
                         if(*iter=="ft:"){//Cuando entramos al final de la cadena
                             iter++; 
-                            ftInfTermDocs.clear();
+                            if(almacenarPosTerm==true) ftInfTermDocs.clear();
                             ftInfTermDocs.push_back(std::stol(*iter));    
                         }
                         if(*iter == "total:"){//Sacaremos la frecuencia del doc
@@ -336,12 +337,23 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                         }
                         if(*iter == "id.doc:"){//Sacamos el id del documento que va en el unordered map
                             iter++; 
-                            idsDocs.clear();
+                            if(almacenarPosTerm==true)idsDocs.clear();
                             idsDocs.push_back(std::stol(*iter)); 
                         }
                     }
                     unordered_map <long int , InfTermDoc > l_docs; 
                     //Una vez fuera del bucle, crearemos el término 
+                    if(almacenarPosTerm==false ){
+                        listaCompleta.clear();
+                        for(auto iterator = idsDocs.begin() ; iterator != idsDocs.end() ; iterator ++){
+                            InfTermDoc *act = new InfTermDoc(); 
+                            act->setFt(*ftInfTermDocs.begin()); 
+                            ftInfTermDocs.erase(ftInfTermDocs.begin());
+                             std::pair<long int , InfTermDoc> parejaAct (*iterator,*act);
+                            l_docs.insert(parejaAct); 
+                            delete act;
+                        }
+                    }
                     for(auto iterator = listaCompleta.begin() ; iterator!= listaCompleta.end() ; iterator ++){
                         InfTermDoc *act = new InfTermDoc(); 
                         act->setFt(iterator->second.first); 
@@ -350,7 +362,9 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                         l_docs.insert(parejaAct); 
                         delete act;
                     }
+                    
                     //Una vez tengamos el l_docs
+                    
                     actualTerm->setL_docs(l_docs);
                     //Lo meteremos en el índice
                     std::pair<string , InformacionTermino> term (it1 , *actualTerm);
@@ -565,7 +579,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
     }
     try{
         if(!ReadPrivValuesMaps() ){
-            cerr<<"Error al leer el archivo con los ?ndices"<<endl;
+            cerr<<"Error al leer el archivo con los índices"<<endl;
             return;
         }
     }catch(...){
@@ -1107,21 +1121,17 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
     list<string> *tokens= new list<string>(); 
     list<string> *conjunto = new list<string >();
     
-    //std::string *buffer = new string();
     while(std::getline(f,to,'\n')){
         this->tok.Tokenizar(to, *tokens);
         for( auto its = tokens->begin(); its!=tokens->end() ; its++){
             conjunto->push_back(*its);
         }
-        
-        //buffer->append(to);
-        //buffer->append("\n");
     }
-    //cout<<*buffer<<endl;
-    
+   
+    delete tokens;
     for(auto to = conjunto->begin() ; to != conjunto->end() ; to ++){
         //cout<<*to<<endl;
-        palabras->push_back(*to);
+        palabras->push_back(*to); //Pos si falla, saber en qué término nos hemos quedado 
         if(*to=="" ||*to ==" " ) break;
         bool eraPalabraParada= false;
         for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
@@ -1224,6 +1234,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
     informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()+actual.getTamBytes());
     informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
     file.close();
+    delete conjunto;
     /*if(remove(ficheroSalida.c_str()) != 0 ) {
         return false;
     }*/
