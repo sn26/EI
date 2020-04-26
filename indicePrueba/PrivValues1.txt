@@ -1,4 +1,3 @@
-PreguntaIndexada
 FicheroStopWords./StopWordsEspanyol.txt
 tipoStemmer0
 Almacena en disco0

@@ -8,7 +8,7 @@ frasco
 de
 100
 ml
-informacion
+	informacion
 basica
 del
 medicamento
@@ -21,7 +21,7 @@ medicamento
 nombre
 del
 medicamento
-echinacin
+	echinacin
 madaus
 solucion
 oral
@@ -31,6 +31,7 @@ composicion
 cualitativa
 y
 cuantitativa
+	
 cada
 100
 g
@@ -48,21 +49,24 @@ floridas
 de
 echinacea
 purpurea
-31,5
-53,6
-1
-0.2,34
-0.2,34
+[31
+5-53
+6
+1]
+2
+34
 g
 3
 forma
 farmaceutica
+	
 solucion
 oral
 4
 datos
 clinicos
-4.1
+	4
+1
 indicaciones
 terapeuticas
 tratamiento
@@ -77,7 +81,8 @@ las
 vias
 respiratorias
 altas
-4.2
+4
+2
 posologia
 y
 forma
@@ -102,6 +107,7 @@ habitual
 es
 la
 siguiente
+-
 adultos
 5
 ml
@@ -109,7 +115,8 @@ ml
 veces
 al
 dia
-4.3
+4
+3
 contraindicaciones
 hipersensibilidad
 conocida
@@ -169,7 +176,7 @@ reumatoide
 del
 tejido
 conectivo
-colagenosis
+(colagenosis)
 esclerosis
 multiple
 sindrome
@@ -182,12 +189,13 @@ virus
 de
 inmunodeficiencia
 humana
-vih
+(vih)
 y
 otras
 enfermedades
 autoinmunes
-4.4
+4
+4
 advertencias
 y
 precauciones
@@ -243,7 +251,8 @@ de
 estomago
 y
 diarrea
-4.5
+4
+5
 interaccion
 con
 con
@@ -257,7 +266,8 @@ interaccion
 no
 se
 conocen
-4.6
+4
+6
 embarazo
 y
 lactancia
@@ -290,7 +300,8 @@ uso
 en
 dichas
 situaciones
-4.7
+4
+7
 efectos
 sobre
 la
@@ -320,7 +331,8 @@ la
 utilizacion
 de
 maquinaria
-4.8
+4
+8
 reacciones
 adversas
 en
@@ -339,7 +351,7 @@ tipicos
 como
 erupcion
 cutanea
-prurito
+prurito;
 raramente
 se
 ha
@@ -363,7 +375,8 @@ los
 sistemas
 de
 farmacovigilancia
-4.9
+4
+9
 sobredosificacion
 hasta
 el
@@ -384,7 +397,8 @@ farmacologicas
 de
 este
 medicamento
-5.1
+	5
+1
 propiedades
 farmacodinamicas
 echinacin
@@ -428,10 +442,10 @@ en
 las
 celulas
 inmunocompetentes
-entre
+(entre
 otras
 los
-linfocitos
+linfocitos)
 ademas
 se
 alcanza
@@ -450,17 +464,20 @@ hialuronidasa
 grupo
 farmacoterapeutico
 v03ax
+-
 otros
 productos
 terapeuticos
-5.2
+5
+2
 propiedades
 farmacocineticas
 no
 existen
 datos
 disponibles
-5.3
+5
+3
 datos
 preclinicos
 sobre
@@ -491,15 +508,13 @@ intravenosas
 de
 hasta
 10
-ml
-kg
+ml/kg
 o
 dosis
 orales
 de
 30
-ml
-kg
+ml/kg
 sin
 que
 apareciesen
@@ -517,8 +532,7 @@ orales
 de
 hasta
 8
-ml
-kg
+ml/kg
 no
 produjeron
 efectos
@@ -564,7 +578,8 @@ preñadas
 6
 datos
 farmaceuticos
-6.1
+	6
+1
 relacion
 de
 excipientes
@@ -582,13 +597,15 @@ citrico
 anhidro
 agua
 purificada
-6.2
+6
+2
 incompatibilidades
 no
 se
 han
 descrito
-6.3
+6
+3
 periodo
 de
 validez
@@ -606,7 +623,8 @@ estable
 durante
 8
 semanas
-6.4
+6
+4
 precauciones
 especiales
 de
@@ -623,7 +641,8 @@ en
 el
 envase
 original
-6.5
+6
+5
 naturaleza
 y
 contenido
@@ -645,14 +664,15 @@ con
 tapon
 de
 rosca
-6.6
+6
+6
 instrucciones
 de
-uso
-manipulacion
+uso/manipulacion
 ninguna
 especial
-6.7
+6
+7
 nombre
 y
 domicilio
@@ -664,10 +684,10 @@ autorizacion
 de
 comercializacion
 madaus
-s.a
+s
+a
 foc
-68
-82
+68-82
 08038
 barcelona
 españa
@@ -679,8 +699,9 @@ de
 la
 ficha
 tecnica
+	
 septiembre
 2005
-prospectos
+	prospectos
 de
 medicamentos

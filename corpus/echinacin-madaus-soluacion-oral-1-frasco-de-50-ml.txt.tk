@@ -7,7 +7,7 @@ frasco
 de
 50
 ml
-informacion
+	informacion
 basica
 del
 medicamento
@@ -20,7 +20,7 @@ medicamento
 nombre
 del
 medicamento
-echinacin
+	echinacin
 madaus
 solucion
 oral
@@ -31,7 +31,7 @@ composicion
 cualitativa
 y
 cuantitativa
-cada
+	cada
 ml
 contiene
 principio
@@ -46,25 +46,27 @@ floridas
 de
 echinacea
 purpurea
-1,7
-2,5
-1
-0.800
-00
+(1
+7-2
+5
+1)
+800
 mg
 excipientes
 ver
 epigrafe
-6.1
+6
+1
 3
 forma
 farmaceutica
-solucion
+	solucion
 oral
 4
 datos
 clinicos
-4.a
+	4
+a
 indicaciones
 terapeuticas
 tratamiento
@@ -79,7 +81,8 @@ las
 vias
 respiratorias
 altas
-4.b
+4
+b
 posologia
 y
 forma
@@ -98,20 +101,22 @@ tratamiento
 durante
 el
 primer
-dia
+dia)
 es
 de
 una
 toma
 inicial
 de
-2,5
+2
+5
 ml
 seguida
 de
 tomas
 de
-1,5
+1
+5
 ml
 en
 intervalos
@@ -131,7 +136,8 @@ siguientes
 dias
 se
 administraran
-2,5
+2
+5
 ml
 3
 veces
@@ -148,7 +154,8 @@ de
 a
 15
 dias
-4.c
+4
+c
 contraindicaciones
 hipersensibilidad
 conocida
@@ -207,14 +214,15 @@ de
 la
 inmunodeficiencia
 humana
-vih
+(vih)
 y
 otras
 enfermedades
 del
 sistema
 inmunitario
-4.d
+4
+d
 advertencias
 y
 precauciones
@@ -255,10 +263,8 @@ excipientes
 este
 medicamento
 contiene
-22
-%
-v
-v
+22%
+v/v
 de
 etanol
 en
@@ -306,8 +312,9 @@ medicamentos
 la
 dosis
 recomendada
-7,5
-ml
+(7
+5
+ml)
 corresponde
 a
 1350
@@ -316,7 +323,8 @@ de
 etanol
 al
 dia
-4.e
+4
+e
 interacciones
 con
 con
@@ -330,7 +338,8 @@ interaccion
 no
 se
 conocen
-4.f
+4
+f
 embarazo
 y
 lactancia
@@ -362,8 +371,7 @@ debera
 valorarse
 la
 relacion
-beneficio
-riesgo
+beneficio/riesgo
 el
 consumo
 de
@@ -389,7 +397,8 @@ ser
 tenido
 en
 cuenta
-4.g
+4
+g
 efectos
 sobre
 la
@@ -402,7 +411,8 @@ maquinaria
 no
 se
 conocen
-4.h
+4
+h
 reacciones
 adversas
 en
@@ -430,7 +440,8 @@ respiratoria
 vertigo
 e
 hipotension
-4.i
+4
+i
 sobredosificacion
 hasta
 el
@@ -470,7 +481,8 @@ farmacologicas
 de
 este
 medicamento
-5.a
+	5
+a
 propiedades
 farmacologicas
 echinacin
@@ -515,7 +527,8 @@ actividad
 de
 la
 hialuronidasa
-5.b
+5
+b
 propiedades
 farmacocineticas
 no
@@ -525,7 +538,8 @@ de
 datos
 en
 humanos
-5.c
+5
+c
 datos
 preclinicos
 de
@@ -558,16 +572,14 @@ intravenosas
 de
 hasta
 10
-ml
-kg
+ml/kg
 y
 dosis
 orales
 de
 hasta
 30
-ml
-kg
+ml/kg
 sin
 que
 apareciesen
@@ -588,8 +600,7 @@ orales
 de
 hasta
 8
-ml
-kg
+ml/kg
 no
 produjeron
 efectos
@@ -617,7 +628,8 @@ negativos
 6
 datos
 farmaceuticos
-6.a
+	6
+a
 relacion
 de
 excipientes
@@ -625,22 +637,23 @@ agua
 purificada
 y
 etanol
-22
-%
-v
-v
-6.b
+22%
+v/v
+6
+b
 incompatibilidades
 no
 se
 conocen
-6.c
+6
+c
 periodo
 de
 validez
 5
 años
-6.d
+6
+d
 precauciones
 especiales
 de
@@ -649,7 +662,8 @@ ninguna
 a
 temperatura
 ambiente
-6.e
+6
+e
 naturaleza
 y
 contenido
@@ -670,11 +684,11 @@ incorporado
 un
 vaso
 dosificador
-6.f
+6
+f
 instrucciones
 de
-uso
-manipulacion
+uso/manipulacion
 la
 dosis
 prescrita
@@ -688,7 +702,8 @@ un
 poco
 de
 agua
-6.g
+6
+g
 nombre
 o
 razon
@@ -705,10 +720,10 @@ de
 la
 autorizacion
 madaus
-s.a
+s
+a
 foc
-68
-82
+68-82
 08038
 barcelona
 7
@@ -718,8 +733,8 @@ de
 la
 ficha
 tecnica
-abril
+	abril
 2004
-prospectos
+	prospectos
 de
 medicamentos

@@ -168,49 +168,49 @@ bool IndexadorHash::GuardarIndexacion() const{
         if(!WriteStopWords()) {//ALMACENAMOS LAS PALABRAS DE PARADA
             return false;
         } 
-        std::string buffer;
-        buffer.clear();
+        std::string *buffer = new string();
+        buffer->clear();
         //AHORA COGEREMOS LOS VALORES DE LAS VARIABLES PRIVADAS QUE IR?N AL PRIMER ARCHIVO    
-        buffer.append("PreguntaIndexada" + this->pregunta);     
-        buffer.append("\n");
-        buffer.append("FicheroStopWords" + this->ficheroStopWords);    
-        buffer.append("\n");
-        buffer.append("tipoStemmer"); buffer.append(to_string(this->tipoStemmer));   
-        buffer.append("\n");
-        buffer.append("Almacena en disco"); buffer.append(to_string( this->almacenarEnDisco));    
-        buffer.append("\n");
-        buffer.append("Almacena posTerm"); buffer.append(to_string(this->almacenarPosTerm));   
-        buffer.append("\n");
-        buffer.append("TOKDelimiters"); buffer.append(this->tok.DelimitadoresPalabra());  
-        buffer.append("\n");
-        buffer.append("TOKPasarAMinSin");buffer.append(to_string(this->tok.PasarAminuscSinAcentos()));  
-        buffer.append("\n");
-        buffer.append("TOKCasosEspeciales"); buffer.append(to_string(this->tok.CasosEspeciales()));  
-        buffer.append("\n");
-        buffer.append("ICDDNumDocs");  buffer.append(to_string(informacionColeccionDocs.getNumDocs()));
-        buffer.append("\n");
-        buffer.append("ICDDNumTotalPal");  buffer.append(to_string(informacionColeccionDocs.getNumTotalPal()));
-        buffer.append("\n"); 
-        buffer.append("ICDDNumSinParada"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalSinParada())); 
-        buffer.append("\n");
-        buffer.append("ICDDNumDiferentes"); buffer.append(to_string(informacionColeccionDocs.getNumTotalPalDiferentes()));
-        buffer.append("\n");
-        buffer.append("ICDDTamBytes"); buffer.append(to_string(informacionColeccionDocs.getTamBytes()));
-        buffer.append("\n");
-        buffer.append("INFPREGNumTotalPal"); buffer.append(to_string(infPregunta.getNumTotalPal())); 
-        buffer.append("\n");
-        buffer.append("INFPREGDiferentes"); buffer.append(to_string( infPregunta.getNumTotalPalDiferentes())); 
-        buffer.append("\n"); 
-        buffer.append("INFPREGSinParada"); buffer.append( to_string(infPregunta.getNumTotalPalSinParada())); 
+        buffer->append("PreguntaIndexada" + this->pregunta);     
+        buffer->append("\n");
+        buffer->assign("FicheroStopWords" + this->ficheroStopWords);    
+        buffer->append("\n");
+        buffer->append("tipoStemmer"); buffer->append(to_string(this->tipoStemmer));   
+        buffer->append("\n");
+        buffer->append("Almacena en disco"); buffer->append(to_string( this->almacenarEnDisco));    
+        buffer->append("\n");
+        buffer->append("Almacena posTerm"); buffer->append(to_string(this->almacenarPosTerm));   
+        buffer->append("\n");
+        buffer->append("TOKDelimiters"); buffer->append(this->tok.DelimitadoresPalabra());  
+        buffer->append("\n");
+        buffer->append("TOKPasarAMinSin");buffer->append(to_string(this->tok.PasarAminuscSinAcentos()));  
+        buffer->append("\n");
+        buffer->append("TOKCasosEspeciales"); buffer->append(to_string(this->tok.CasosEspeciales()));  
+        buffer->append("\n");
+        buffer->append("ICDDNumDocs");  buffer->append(to_string(informacionColeccionDocs.getNumDocs()));
+        buffer->append("\n");
+        buffer->append("ICDDNumTotalPal");  buffer->append(to_string(informacionColeccionDocs.getNumTotalPal()));
+        buffer->append("\n"); 
+        buffer->append("ICDDNumSinParada"); buffer->append(to_string(informacionColeccionDocs.getNumTotalPalSinParada())); 
+        buffer->append("\n");
+        buffer->append("ICDDNumDiferentes"); buffer->append(to_string(informacionColeccionDocs.getNumTotalPalDiferentes()));
+        buffer->append("\n");
+        buffer->append("ICDDTamBytes"); buffer->append(to_string(informacionColeccionDocs.getTamBytes()));
+        buffer->append("\n");
+        buffer->append("INFPREGNumTotalPal"); buffer->append(to_string(infPregunta.getNumTotalPal())); 
+        buffer->append("\n");
+        buffer->append("INFPREGDiferentes"); buffer->append(to_string( infPregunta.getNumTotalPalDiferentes())); 
+        buffer->append("\n"); 
+        buffer->append("INFPREGSinParada"); buffer->append( to_string(infPregunta.getNumTotalPalSinParada())); 
         std::ofstream i(this->directorioIndice + "/PrivValues1.txt" );
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio " <<this->directorioIndice<< " el archivo de guardado del disco: PrivValues1.txt" << endl;
             if( remove( this->ficheroStopWords.c_str() ) != 0 ) cerr<< "Error deleting file" ;
             return false;
         }
-        i.write(buffer.data(), buffer.size());
+        i.write(buffer->data(), buffer->size());
         i.close();
-        buffer.clear(); 
+        buffer->clear(); 
         std::stringstream o; 
         //Ahora guardaremos el resto en PrivValuesMaps.txt
         o<<"INDICE\n";
@@ -219,7 +219,7 @@ bool IndexadorHash::GuardarIndexacion() const{
         for ( auto it = this->indiceDocs.begin(); it != this->indiceDocs.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n';}
         o<<"INDICEPREGUNTA\n";
         for ( auto it = this->indicePregunta.begin(); it != this->indicePregunta.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n'; }
-        buffer= buffer + o.str();
+        *buffer= *buffer + o.str();
         i.open(this->directorioIndice + "/PrivValuesMaps.txt");
         if(!i) {
             cerr << "ERROR: No se ha podido escribir en el directorio "<<this->directorioIndice<< " el archivo de guardado del disco: PrivValuesMaps.txt" << endl;
@@ -227,8 +227,8 @@ bool IndexadorHash::GuardarIndexacion() const{
             if( remove( "PrivValues1.txt" ) != 0 ) cerr<< "Error deleting file" ;
             return false;
         }
-        i.write(buffer.data() , buffer.size()); 
-        buffer.clear();
+        i.write(buffer->data() , buffer->size()); 
+        buffer->clear();
         i.close(); 
         return true;
     }else {
@@ -1087,15 +1087,15 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
         return false;
     }
     ifstream file;     
-    string ext = ".tk";
-    string ficheroSalida = fichero + ext;       
-    this->tok.Tokenizar(fichero , ficheroSalida); //Los tokens se habr?n guardado en el fichero de salida, y ser? de ah? de donde los cogeremos
-    file.open(ficheroSalida);
+    //string ext = ".tk";
+    //string ficheroSalida = fichero + ext;       
+    //this->tok.Tokenizar(fichero , ficheroSalida); //Los tokens se habr?n guardado en el fichero de salida, y ser? de ah? de donde los cogeremos
+    file.open(fichero);
     if(!file){
         cerr<<"Error: El fichero: "<<fichero<<" No se ha podido abrir "<<endl;
         return false; //No mostramos mensaje de error porque se supone que el archivo lo acabamos de crear  
     } 
-    std::ifstream f(ficheroSalida );
+    std::ifstream f(fichero );
     std::string to; 
     actual.setTamBytes( properties.st_size); //Ponemos el tama?o de los bytes
     actual.setNumPal(0); actual.setNumPalSinParada(0); actual.setNumPalDiferentes(0); 
@@ -1104,12 +1104,28 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
     elNuevo = new InfTermDoc();
     elNuevo->setFt(0);
     //Iremos por cada token creado en el archivo
+    list<string> *tokens= new list<string>(); 
+    list<string> *conjunto = new list<string >();
+    
+    //std::string *buffer = new string();
     while(std::getline(f,to,'\n')){
-        palabras->push_back(to);
-        if(to=="" ||to ==" " ) break;
+        this->tok.Tokenizar(to, *tokens);
+        for( auto its = tokens->begin(); its!=tokens->end() ; its++){
+            conjunto->push_back(*its);
+        }
+        
+        //buffer->append(to);
+        //buffer->append("\n");
+    }
+    //cout<<*buffer<<endl;
+    
+    for(auto to = conjunto->begin() ; to != conjunto->end() ; to ++){
+        //cout<<*to<<endl;
+        palabras->push_back(*to);
+        if(*to=="" ||*to ==" " ) break;
         bool eraPalabraParada= false;
         for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
-            if(*iterator == to){ //Hemos encontrado una stopWord
+            if(*iterator == *to){ //Hemos encontrado una stopWord
                 //Sumaremos +1 al n?mero de palabras que nos hemos encontrado en el documento
                 actual.setNumPal(actual.getNumPal() + 1);  
                 eraPalabraParada = true;
@@ -1120,15 +1136,15 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
             //Miramos si estaba ya indexada (Como quiero hacerlo eficiente, no utilizo la funci?n Existe para mirar esto)
             if(tipoStemmer == 1 ){
                 stemmerPorter s = stemmerPorter(); 
-                s.stemmer(to , 1); 
+                s.stemmer(*to , 1); 
             }
             if(tipoStemmer == 2 ){
                 stemmerPorter s = stemmerPorter(); 
-                s.stemmer(to , 2); 
+                s.stemmer(*to , 2); 
             }
             bool encontradoEnIndice = false; 
             for( auto iterator = this->indice.begin() ; iterator!= indice.end() ; iterator ++){
-                if(iterator->first == to ){ //NOS HEMOS ENCONTRADO CON LA CADENA YA PREVIAMENTE INDEXADA POR OTRO DOCUMENTO 
+                if(iterator->first == *to ){ //NOS HEMOS ENCONTRADO CON LA CADENA YA PREVIAMENTE INDEXADA POR OTRO DOCUMENTO 
                     bool existeYaId = false;
                     encontradoEnIndice = true; 
                     iterator->second.setFtc(iterator->second.getFtc() +1 );
@@ -1177,7 +1193,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
                 unordered_map<long int , InfTermDoc> listaNueva;
                 listaNueva.insert(added);
                 nuevoTermino.setL_docs(listaNueva);
-                std::pair<std::string , InformacionTermino> pareja (to , nuevoTermino);
+                std::pair<std::string , InformacionTermino> pareja (*to , nuevoTermino);
                 this->indice.insert(pareja);
                     
             }
@@ -1208,9 +1224,9 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
     informacionColeccionDocs.setTamBytes(informacionColeccionDocs.getTamBytes()+actual.getTamBytes());
     informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
     file.close();
-    if(remove(ficheroSalida.c_str()) != 0 ) {
+    /*if(remove(ficheroSalida.c_str()) != 0 ) {
         return false;
-    }
+    }*/
     return true; 
 }
 

@@ -13,7 +13,6 @@ IndexadorHash b("./StopWordsEspanyol.txt", ". ,:", false, false, "./indicePrueba
 
 b.Indexar("./listaFicheros_corto.txt");
 b.GuardarIndexacion();
-b.Indexar("./listaFicheros_corto.txt");
 
 IndexadorHash a("./indicePrueba");
 
@@ -60,6 +59,5 @@ if(a.Existe("pal7"))
 	cout << "pal7 SE HA INDEXADO" << endl;
 else
 	cout << "pal7 NO SE HA INDEXADO" << endl;
-	
 
 }
