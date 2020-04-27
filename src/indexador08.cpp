@@ -18,6 +18,7 @@ else
 
 IndexadorHash a("./StopWordsEspanyol.txt", ". ,:", false, false, "./indicePrueba", 0, false, true);
 
+//system("rm /home/tad/16-17/indexador/corpus_corto/*.tk");
 if(a.IndexarDirectorio("./corpus_corto"))
 	cout << "SE HA INDEXADO EL DIRECTORIO ./corpus_corto" << endl;
 else

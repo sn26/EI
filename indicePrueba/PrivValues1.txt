@@ -2,14 +2,15 @@ FicheroStopWords./StopWordsEspanyol.txt
 tipoStemmer0
 Almacena en disco0
 Almacena posTerm1
-TOKDelimiters. ,:
-TOKPasarAMinSin1
+TOKDelimiters,;:.-/+*\ '"{}[]()<>ยก!ฟ?&#=	
+@
+TOKPasarAMinSin0
 TOKCasosEspeciales0
-ICDDNumDocs2
-ICDDNumTotalPal11
-ICDDNumSinParada7
-ICDDNumDiferentes4
-ICDDTamBytes53
+ICDDNumDocs0
+ICDDNumTotalPal0
+ICDDNumSinParada0
+ICDDNumDiferentes0
+ICDDTamBytes0
 INFPREGNumTotalPal0
 INFPREGDiferentes0
 INFPREGSinParada0

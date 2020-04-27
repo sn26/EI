@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstdlib> 
+#include<string.h>
 //#include <sstream>
 ostream& operator<<(ostream& os , const Tokenizador& tokenizer){
     os <<"DELIMITADORES: " << tokenizer.delimiters << " TRATA CASOS ESPECIALES: "
@@ -103,7 +104,7 @@ void Tokenizador::Tokenizar (const string& str, list<string>& tokens) const{
         cadena = this->pasarMinSin(cadena);    
     }
     if(tokens.size()!= 0 ) tokens.clear(); //Borramos si la lista no est? vac?a
-    string::size_type lastPos = cadena.find_first_not_of(this->delimiters,0);
+   /* string::size_type lastPos = cadena.find_first_not_of(this->delimiters,0);
     string::size_type pos = cadena.find_first_of(this->delimiters,lastPos);
     while(string::npos != pos || string::npos != lastPos)
     {   
@@ -112,7 +113,16 @@ void Tokenizador::Tokenizar (const string& str, list<string>& tokens) const{
         lastPos = cadena.find_first_not_of(delimiters, pos);
         pos = cadena.find_first_of(delimiters, lastPos);
         
-    } 
+    } */
+
+    char*cstr = strtok(const_cast<char*>(cadena.c_str()),const_cast<char*>(this->delimiters.c_str()));    // 5) Make use of i to be explicit 
+    while(cstr!=NULL)                    
+    {
+      tokens.push_back(cstr);
+      cstr=strtok(NULL,const_cast<char*>(this->delimiters.c_str()));
+    }
+    delete cstr;
+   
 }
 
 
