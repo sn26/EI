@@ -214,11 +214,11 @@ bool IndexadorHash::GuardarIndexacion() const{
         std::stringstream o; 
         //Ahora guardaremos el resto en PrivValuesMaps.txt
         o<<"INDICE\n";
-        for ( auto it = this->indice.begin(); it != this->indice.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n'; }
+        for ( auto it = this->indice.begin(); it != this->indice.end(); it++ ){ o<<it->first<<"\t "<<it->second<<endl; }
         o<<"INDICEDOCS\n";
-        for ( auto it = this->indiceDocs.begin(); it != this->indiceDocs.end(); ++it ){ o<<it->first<<"\t"<<it->second<<'\n';}
+        for ( auto it = this->indiceDocs.begin(); it != this->indiceDocs.end(); it++ ){ o<<it->first<<"\t "<<it->second<<endl;}
         o<<"INDICEPREGUNTA\n";
-        for ( auto it = this->indicePregunta.begin(); it != this->indicePregunta.end(); ++it ){ o<<it->first<<"\t"<<it->second<<"\tPREG:"<<"\t "<<this->pregunta<<endl;'\n'; }
+        for ( auto it = this->indicePregunta.begin(); it != this->indicePregunta.end(); it++ ){ o<<it->first<<"\t "<<it->second<<"\tPREG:"<<"\t "<<this->pregunta<<endl;'\n'; }
         *buffer= *buffer + o.str();
         i.open(this->directorioIndice + "/PrivValuesMaps.txt");
         if(!i) {
@@ -282,16 +282,20 @@ bool IndexadorHash::ReadPrivValuesMaps() {
     list<string> res; 
     while(std::getline(f,to,'\n')){
         res.clear();
+        //cout<<"CADENA:"<<to<<endl;
         if(to.find("INDICE")==string::npos && to.find("INDICEDOCS")==string::npos && to.find("INDICEPREGUNTA")==string::npos){//SI NO ESTAMOS CAMBIANDO ENTRE UNO Y OTRO
             if(p=="INDICE"){//CUANDO ESTAMOS EN EL PRIMERO
-                string it1 = ""; //Primera parte del conjunto (string)
-                string it2 = ""; //Segunda parte del  conjunto (<<InformacionTermino)
-                if(to.find("\t")!=string::npos){ //STRING 
+                //string it1 = ""; //Primera parte del conjunto (string)
+                //string it2 = ""; //Segunda parte del  conjunto (<<InformacionTermino)
+                /*if(to.find("\t")!=string::npos){ //STRING 
                     it1 = to.substr(0, to.find("\t"));
+                    cout<<"MI IT1 ES "<<it1<<endl;
                     string p = "\t";
                     it2 = to.substr(to.find("\t") + p.length());
-                } 
-                if(it2!=""){      
+                }*/ 
+               // cout<<"ENTRANDO"<<endl;
+                if(to.find("\t")!=string::npos){   
+                    string it1="";   
                     //cout<<"LA CADENA QUE VAMOS A INDEXAR PARA "<<it1<<" es "<<it2<<endl;
                     InformacionTermino *actualTerm = new InformacionTermino(); 
                     list<int> InfTermDocLista; 
@@ -299,16 +303,31 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                     list<long int> idsDocs;
                     unordered_map<long int , InfTermDoc> entero; 
                     unordered_map<long int , std::pair<int , list<int>>> listaCompleta;
-                    tok.Tokenizar(it2,res);//AS? SACAREMOS CADA UNA DE LAS PARTES QUE NECESITAMOS
-                    
+                    tok.Tokenizar(to,res);//AS? SACAREMOS CADA UNA DE LAS PARTES QUE NECESITAMOS
+                    bool nombre = false;
 			        for(list<string>::iterator iter= res.begin();iter!= res.end();++iter){
-                        if(*iter!="ft:" && *iter!="frecuencia" && *iter!="total:" && *iter!="fd:" && *iter!="id.doc:" && this->almacenarPosTerm==true){ //CUANDO NOS ENCONTRAMOS N?MEROS (ESTAMOS AL FINAL)
-                           for( auto iter2= iter ; iter2!=res.end() ; iter2++){
+                        //cout<<"MIRAMOS EL "<<*iter<<endl;
+                        
+                        if(*iter!="ft:" && *iter!="frecuencia" && *iter!="total:" && *iter!="fd:" && *iter!="id.doc:" && this->almacenarPosTerm==true && nombre == true ){ //CUANDO NOS ENCONTRAMOS N?MEROS (ESTAMOS AL FINAL)
+                            for( auto iter2= iter ; iter2!=res.end() ; iter2++){
                                iter=iter2;
                                if(*iter2!="ft:" && *iter2!="frecuencia" && *iter2!="total:" && *iter2!="fd:" && *iter2!="id.doc:"){
                                     InfTermDocLista.push_back(std::stoi(*iter2));
                                }else break;
                            } 
+                            
+                        }
+                        if( nombre == false ){
+                            //cout<<"ME METO ULT CON "<<*iter<<endl;
+                            auto iter2 = iter; 
+                            iter2++;
+                            //cout<<"MI ITER 2 ES "<<*iter2<<endl;
+                            if(*iter2=="frecuencia"){
+                                nombre = true;
+                                //cout<<"Me he metido a mirar "<<*iter<<endl;
+                                it1=*iter;
+                                //iter++;
+                            }
                             
                         }
                         if(idsDocs.size() >=1 && this->almacenarPosTerm==true && InfTermDocLista.size()>=1 ){
@@ -321,7 +340,8 @@ bool IndexadorHash::ReadPrivValuesMaps() {
                             InfTermDocLista.clear();
                             //}
                         }
-                        if(*iter=="ft:"){//Cuando entramos al final de la cadena
+                        if(*iter=="ft:" ){//Cuando entramos al final de la cadena
+                            //cout<<"Entrando antes del desastre "<<endl;
                             iter++; 
                             if(almacenarPosTerm==true) ftInfTermDocs.clear();
                             ftInfTermDocs.push_back(std::stol(*iter));    
@@ -1115,9 +1135,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
     std::string to; 
     actual.setTamBytes( properties.st_size); //Ponemos el tama?o de los bytes
     actual.setNumPal(0); actual.setNumPalSinParada(0); actual.setNumPalDiferentes(0); 
-    InfTermDoc *elNuevo;
-    elNuevo = new InfTermDoc();
-    elNuevo->setFt(0);
+    
     //Iremos por cada token creado en el archivo
     list<string> *tokens= new list<string>(); 
     list<string> *conjunto = new list<string >();
@@ -1126,12 +1144,13 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
         for( auto its = tokens->begin(); its!=tokens->end() ; its++){
             conjunto->push_back(*its);
         }
+        tokens->clear();
     }
     delete tokens;
     for(auto to = conjunto->begin() ; to != conjunto->end() ; to ++){
         //cout<<*to<<endl;
+        
         palabras->push_back(*to); //Pos si falla, saber en qué término nos hemos quedado 
-        if(*to=="" ||*to ==" " ) break;
         bool eraPalabraParada= false;
         string * copia = new string(); 
         *copia = *to;
@@ -1143,6 +1162,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
             stemmerPorter s = stemmerPorter(); 
             s.stemmer(*to , 2); 
         }
+        if(*to=="" ||*to ==" " || *to=="\n" || *to=="\r" || *to=="\n" || *to=="\t") break;
         for(auto iterator = this->stopWords.begin() ; iterator!= stopWords.end() ; iterator ++){
             if(*iterator == *to ||*copia == *iterator){ //Hemos encontrado una stopWord
                 //Sumaremos +1 al n?mero de palabras que nos hemos encontrado en el documento
@@ -1156,7 +1176,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
             //Miramos si estaba ya indexada (Como quiero hacerlo eficiente, no utilizo la funci?n Existe para mirar esto)
            
             bool encontradoEnIndice = false; 
-            for( auto iterator = this->indice.begin() ; iterator!= indice.end() ; iterator ++){
+            for( auto iterator = this->indice.begin() ; iterator!= this->indice.end() ; iterator ++){
                 if(iterator->first == *to ){ //NOS HEMOS ENCONTRADO CON LA CADENA YA PREVIAMENTE INDEXADA POR OTRO DOCUMENTO 
                     bool existeYaId = false;
                     encontradoEnIndice = true; 
@@ -1173,11 +1193,14 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
                             existeYaId = true; 
                             break; 
                         }      
-                    }
+                    }if(existeYaId)break;
                     if(!existeYaId){
-                        elNuevo->setFt(elNuevo->getFt() + 1 );
+                       // cout<<"ENTRANDO"<<endl;
+                        InfTermDoc *elNuevo;
+                        elNuevo = new InfTermDoc();
+                        elNuevo->setFt( 1 );
                         if(this->almacenarPosTerm == true ){
-                            list<int> copia= elNuevo->getPosTerm();
+                            list<int> copia;//= elNuevo->getPosTerm();
                             copia.push_back(actual.getNumPal());
                             elNuevo->setPosTerm(copia);
                         }
@@ -1186,6 +1209,8 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
                         unordered_map<long int , InfTermDoc> copia2 = iterator->second.getL_docs(); 
                         copia2.insert(added);
                         iterator->second.setL_docs(copia2);
+                        delete elNuevo;
+                        break;
                     }
                     break; 
                 }
@@ -1195,9 +1220,11 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
                 InformacionTermino nuevoTermino = InformacionTermino(); 
                 nuevoTermino.setFt(1); 
                 nuevoTermino.setFtc(1);
-                elNuevo->setFt(1);
+                InfTermDoc *elNuevo;
+                elNuevo = new InfTermDoc();
+                elNuevo->setFt( 1 );
                 if(almacenarPosTerm == true){
-                    list<int> copia = elNuevo->getPosTerm(); 
+                    list<int> copia;
                     copia.push_back(actual.getNumPal());//Metemos el n?mero de palabras que nos hemos encontrado
                     elNuevo->setPosTerm(copia);
                 }
@@ -1208,7 +1235,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
                 nuevoTermino.setL_docs(listaNueva);
                 std::pair<std::string , InformacionTermino> pareja (*to , nuevoTermino);
                 this->indice.insert(pareja);
-                    
+                delete elNuevo; 
             }
             actual.setNumPalSinParada(actual.getNumPalSinParada() + 1 );
             actual.setNumPal(actual.getNumPal() + 1 );
@@ -1238,6 +1265,7 @@ bool IndexadorHash::IndexarUnDocu(const char * fichero , InfDoc & actual , list<
     informacionColeccionDocs.setNumTotalPalSinParada(informacionColeccionDocs.getNumTotalPalSinParada()+actual.getNumPalSinParada());
     file.close();
     delete conjunto;
+    
     return true; 
 }
 
@@ -1276,7 +1304,7 @@ bool IndexadorHash::Indexar(const string& ficheroDocumentos){
                 if(f > copiaFechaIterator ){ //Cuando f es m?s actual que la fecha que hab?a metida
                     //Borraremos e indexaremos nuevamente el documento
                     auto copia = iterator; 
-                    indiceDocs.erase(iterator);
+                    this->BorraDoc(to);
                     list<string> *palabras= new list<string>;
                     try{
                         struct stat properties;  //Lo usaremos para poder sacar los valores del tama?o en bytes

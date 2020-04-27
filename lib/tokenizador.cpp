@@ -104,7 +104,7 @@ void Tokenizador::Tokenizar (const string& str, list<string>& tokens) const{
         cadena = this->pasarMinSin(cadena);    
     }
     if(tokens.size()!= 0 ) tokens.clear(); //Borramos si la lista no est? vac?a
-   /* string::size_type lastPos = cadena.find_first_not_of(this->delimiters,0);
+    /*string::size_type lastPos = cadena.find_first_not_of(this->delimiters,0);
     string::size_type pos = cadena.find_first_of(this->delimiters,lastPos);
     while(string::npos != pos || string::npos != lastPos)
     {   
