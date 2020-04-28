@@ -31,5 +31,5 @@ main() {
 	b.Indexar ("listaFicheros_corto1.txt");
     b.GuardarIndexacion();
 	
-	cout << "Ha tardado " << getcputime() - aa << " segundos" << endl;
+	//cout << "Ha tardado " << getcputime() - aa << " segundos" << endl;
 }

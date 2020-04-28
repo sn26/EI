@@ -95,6 +95,8 @@ class IndexadorHash {
             bool ReadPrivValues1(); //HECHO
             bool WriteStopWords() const ; // HECHOM?todo para escribir en el fichero HECHO 
             void ReadStopWords( ); //HECHO M?todo para leer las palabras de parada del fichero HECHO
+            //bool guardarEnDisco();
+            //bool leerDeDisco();
             IndexadorHash(); //HECHO Este constructor se pone en la parte privada porque no se permitir? crear un indexador sin inicializarlo convenientemente. La inicializaci?n la decidir? el alumno
             unordered_map<string, InformacionTermino> indice; // ?ndice de t?rminos indexados accesible por el t?rmino
             unordered_map<string, InfDoc> indiceDocs; // ?ndice de documentos indexados accesible por el nombre del documento

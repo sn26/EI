@@ -131,7 +131,7 @@ const string& dirIndice, const int& tStemmer, const bool& almEnDisco, const bool
     this->tok.CasosEspeciales(detectComp); 
     this->tok.PasarAminuscSinAcentos(minuscSinAcentos); 
     //VEMOS EN QU? DIRECTORIO VAMOS A ALMACENAR LAS COSAS
-    if(dirIndice.length() == 0 ) this->directorioIndice = "./"; 
+    if(dirIndice.length() == 0 ) this->directorioIndice = "."; 
     else this->directorioIndice = dirIndice; 
     this->tipoStemmer = tStemmer; //TIPO DE STEMMER QUE SE VA A UTILIZAR (0 (NO SE APLICA ),1 (ESPA?OL) ,2(INGL?S))
     this->almacenarEnDisco = almEnDisco; 
@@ -146,7 +146,165 @@ const string& dirIndice, const int& tStemmer, const bool& almEnDisco, const bool
 
 
 
+/**
+ * Método para guardar en disco cuando almDicso==true
+ * 
+ * */
+/*
+bool IndexadorHash::guardarEnDisco(){
+     char * ficheroSAL = new char(); 
+    string concat = "/PrivValuesIND.txt";
+    ficheroSAL = const_cast<char*>((this->directorioIndice + concat).c_str());
+    FILE* fp = fopen( ficheroSAL,"wb");
+    auto t0 = this->indice.size(); 
+    //cout<<"ENTRANDO"<<endl;
+    fwrite(&t0 , sizeof(t0) , sizeof(t0), fp ); 
+    //cout<<"ENTRANDO"<<endl;
+    for ( auto it = this->indice.begin(); it != this->indice.end(); it++ ){ 
+        fwrite(&it->first , sizeof(string ) , it->first.length()+1 , fp  ); 
+        //Recorreremos todo lo del segundo iterador
+        auto t = it->second.getFd(); 
+        fwrite(&t ,sizeof(it->second.getFd()) ,1 , fp );
+        t = it->second.getFt();
+        fwrite(&t , sizeof(t) ,1 , fp );
+        t= it->second.getFtc();
+        fwrite(&t , sizeof(t) , 1 , fp);
+        t= it->second.getL_docs().size(); //Para saber cuántos documentos lo contienen
+        fwrite(&t , sizeof(t) ,1 , fp );
+        
+        //Ahora guardaremos las pos term y los id del doc
+        for(auto it2 = it->second.getL_docs().begin() ; it2 != it->second.getL_docs().end() ; it2++){
+            //POR CADA UNO DE LOS TÉRMINOS, PONDREMOS: NUMTOTALDOCS(PARA AL LEER PODER ITERAR)  - ID.DOC -  FT - ALMACENARPOSTERM - NUMTOTALPOS(PARA AL LEER PODER ITERAR) - POS 
+            auto t2 = it2->first; 
+            fwrite(&t2 , sizeof(t2) , 1 , fp); 
+            t2 = it2->second.getFt(); 
+            fwrite(&t2 , sizeof(t2) , 1 , fp); 
+            t2 = std::stoi(to_string(this->almacenarPosTerm)); 
+            fwrite(&t2 , sizeof(t2) , 1 , fp); 
+            //Ahora almacenaremos las pos si las hay 
+            if(this->almacenarPosTerm ){
+                t2= it2->second.getPosTerm().size(); 
+                fwrite(&t2 , sizeof(t2) , 1 , fp); 
+                for(auto it3 = it2->second.getPosTerm().begin() ; it3 != it2->second.getPosTerm().end() ; it3 ++){
+                    t2= *it3;
+                    fwrite(&t2 , sizeof(t2)  , 1 , fp);
+                }
+            }
 
+
+        }
+        
+    }
+    fclose(fp);
+    /*fp = fopen(this->directorioIndice.c_str() + '/PrivValuesDOCS.txt',"wb");
+    for(auto it = this->indiceDocs.begin() ; it!= this->indiceDocs.end() ; it++){
+        //Tendremos que meter las cosas en otro documento
+        fwrite(&it->first , sizeof(string ) , it->first.length()+1 , fp  ); 
+        auto t = it->second.getIdDoc(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        Fecha* f = new Fecha();
+        *f = it->second.getFechaModificacion(); 
+        t = f->getAnyo(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t = f->getDia(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t=  f->getHora(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t=  f->getMes();
+        fwrite(&t , sizeof(t) , 1 , fp );
+        t=  f->getMin();
+        fwrite(&t , sizeof(t) , 1 , fp );  
+        t=  f->getSeg(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t = it->second.getNumPal(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t= it->second.getNumPalDiferentes(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t = it->second.getNumPalSinParada(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+        t = it->second.getTamBytes(); 
+        fwrite(&t , sizeof(t) , 1 , fp ); 
+
+    }
+    
+    return true;
+}*/
+/**
+ * Hacemos la lectura del disco
+ * 
+ * */ 
+/*
+bool IndexadorHash::leerDeDisco(){
+    char * ficheroSAL = new char(); 
+    string concat = "/PrivValuesIND.txt";
+    ficheroSAL = const_cast<char*>((this->directorioIndice + concat).c_str());
+    
+    
+    FILE* fp = fopen( ficheroSAL,"rb");
+    size_t size;
+    int read_bytes = 0;     
+    fread(&size, sizeof(size), 1, fp);
+    void* buf = malloc(size);
+    fread(buf, size, 1, fp);
+    fclose(fp);
+    int tam = *((int * )buf ); //Con esto leemos el tamaño del índice
+    for(int i = 0 ; i<tam ; i++){
+        InformacionTermino * actual = new InformacionTermino();
+        string * nombre = new string(); 
+        *nombre = *((string*)buf);  // might break if you wrote your file on OS with different endingness
+        read_bytes +=sizeof(*nombre);
+        int fd = *((int * ) buf+read_bytes);
+        actual->setFd(fd);
+        read_bytes += sizeof(fd);
+        int ft = *((int * ) buf + read_bytes);
+        actual->setFt(ft); 
+        read_bytes+=sizeof(fd);
+        int ftc =*((int *) buf + read_bytes);
+        actual->setFtc(ftc);
+        read_bytes += sizeof(ftc);
+        int listDocsTotal = *((int *) buf + read_bytes ); 
+        unordered_map <long int , InfTermDoc>cj;
+        for(int j = 0 ; j<listDocsTotal ; j++){
+            //Sacamos el id 
+            
+            long int idDoc =*((long int * ) buf + read_bytes); 
+            read_bytes = read_bytes + sizeof(idDoc ); 
+            int ftDoc =*((int * ) buf + read_bytes);  
+            read_bytes += sizeof(ftDoc);
+            //Ahora miraremos si tenemos que leer términos
+            int leerPosiciones = *((int*) buf + read_bytes ); 
+            read_bytes += sizeof(leerPosiciones );
+            InfTermDoc *term = new InfTermDoc();
+            if(leerPosiciones == 1 ) {
+                this->almacenarPosTerm = true;
+                //Sacaremos el tamaño
+                int tam = *((int *) buf + read_bytes);
+                read_bytes += sizeof(tam);
+                list<int> *posL = new list<int>();
+                for(int i = 0; i <tam ; i ++){ //ft y PosTerm
+                    int pos = *((int *) buf + read_bytes); 
+                    read_bytes += sizeof(pos);
+                    posL->push_back(pos);
+                } 
+                //Montaremos el término que irá dentro del unordered_map
+                
+                term->setPosTerm(*posL); 
+            }
+            term->setFt(ftDoc);
+            //Lo meteremos al conjunto 
+            std::pair <long int , InfTermDoc > pareja1 (idDoc, *term); 
+            cj.insert(pareja1);
+            delete term;
+
+        }
+        actual->setL_docs(cj);
+        std::pair<string , InformacionTermino> tCompleto (*nombre , *actual);
+        this->indice.insert(tCompleto);
+        delete nombre; delete actual;
+
+    }
+
+}*/
 
 //Aqu? ser? donde nos guardaremos la indexaci?n
 /*
@@ -570,7 +728,7 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
     this->directorioIndice = directorioIndexacion; 
     struct stat dir;
     if(stat(this->directorioIndice.c_str(), &dir) == -1 || !S_ISDIR(dir.st_mode) ){
-        cerr << "Error :  " << strerror(errno) << endl; 
+        cerr << "Error:  " << strerror(errno) << endl; 
         return; 
     }
     this->tok = Tokenizador(); //Inicializamos el tokenizador
@@ -592,22 +750,22 @@ IndexadorHash::IndexadorHash(const string& directorioIndexacion){
             this->almacenarPosTerm=false;
         }
     }catch(...){
-        cerr<<"Los datos del archivo PrivValues1 no son correctos"<<endl;
+        cerr<<"ERROR: Los datos del archivo PrivValues1 no son correctos"<<endl;
         return; 
     }
     try{
         if(this->ficheroStopWords!="") ReadStopWords(); 
     }catch(...){
-        cerr<<"No se ha podido leer el ficheroStopWords"<<endl;
+        cerr<<"ERROR: No se ha podido leer el ficheroStopWords"<<endl;
         return; 
     }
     try{
         if(!ReadPrivValuesMaps() ){
-            cerr<<"Error al leer el archivo con los índices"<<endl;
+            cerr<<"ERROR: al leer el archivo con los índices"<<endl;
             return;
         }
     }catch(...){
-        cerr<<"Los datos del archivo PrivValuesMaps no son correctos"<<endl;
+        cerr<<"ERROR: Los datos del archivo PrivValuesMaps no son correctos"<<endl;
         return; 
     } 
     

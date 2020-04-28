@@ -62,11 +62,11 @@ InformacionTermino::~InformacionTermino(){
     l_docs.clear(); 
 }
 
-const int InformacionTermino::getFtc() {return this->ftc; }
+const int InformacionTermino::getFtc(){return this->ftc; }
 void InformacionTermino::setFtc(const int & ftc){this->ftc = ftc; }
-const int InformacionTermino::getFt(){return this->ft;  }
+const int InformacionTermino::getFt() {return this->ft;  }
 void InformacionTermino::setFt(const int & ft){ this->ft = ft;}
-const int InformacionTermino::getFd(){ return this->fd;}
+const int InformacionTermino::getFd() { return this->fd;}
 void InformacionTermino::setFd(const int & fd){ this->fd = fd;}
 void InformacionTermino::setL_docs(const unordered_map<long int, InfTermDoc> & l_docs ){
     this->l_docs = l_docs;

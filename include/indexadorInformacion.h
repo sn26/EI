@@ -66,7 +66,7 @@ class InformacionTermino {
         void setFt( const int &); 
         const int getFd(); 
         void setFd(const int &);    
-        void setL_docs(const unordered_map<long int, InfTermDoc> & l_docs ); 
+        void setL_docs(const unordered_map<long int, InfTermDoc> & l_docs ) ; 
         unordered_map<long int , InfTermDoc>& getL_docs();             
     private:
         int ft;
