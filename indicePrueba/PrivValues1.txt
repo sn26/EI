@@ -4,7 +4,7 @@ Almacena en disco0
 Almacena posTerm1
 TOKDelimiters,;:.-/+*\ '"{}[]()<>ยก!ฟ?&#=	
 @
-TOKPasarAMinSin1
+TOKPasarAMinSin0
 TOKCasosEspeciales0
 ICDDNumDocs2
 ICDDNumTotalPal11

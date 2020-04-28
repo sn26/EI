@@ -14,9 +14,6 @@ using namespace std;
 class InfTermDoc {
     friend ostream& operator<<(ostream& s, const InfTermDoc& p){
         s << "ft: " << p.ft;
-        // A continuaci?n se mostrar?an todos los elementos de p.posTerm (?posicion
-        //TAB posicion TAB ... posicion, es decir nunca finalizar? en un TAB?): s <<
-        //?\t? << posicion; 
         InfTermDoc p2 = p; 
         for (std::list<int>::iterator it=p2.posTerm.begin(); it != p2.posTerm.end(); ++it){
             s <<"\t" << *it;
@@ -32,6 +29,7 @@ class InfTermDoc {
         //M?todos para gestionar la parte privada
         const list<int>& getPosTerm();
 		void setPosTerm(const list<int>&);
+        void addPosTerm(const int &);
         const int getFt(); 
         void setFt(const int & );
     private:
@@ -67,6 +65,7 @@ class InformacionTermino {
         const int getFd(); 
         void setFd(const int &);    
         void setL_docs(const unordered_map<long int, InfTermDoc> & l_docs ) ; 
+        void addL_docs(const std::pair<long int , InfTermDoc> &doc);
         unordered_map<long int , InfTermDoc>& getL_docs();             
     private:
         int ft;
@@ -100,7 +99,7 @@ class Fecha{
         const int getMin(); 
         const int getSeg(); 
 	private:
-        bool comprobadorFecha(const int &  dia , const int &  mes , const int &  anyo , const int &  hora , const int &  min , const int & seg); //Para comprobar si una fecha es correcta
+        //bool comprobadorFecha(const int &  dia , const int &  mes , const int &  anyo , const int &  hora , const int &  min , const int & seg); //Para comprobar si una fecha es correcta
 		int mes;
         int dia; 
 		int anyo;
@@ -108,25 +107,6 @@ class Fecha{
 		int min;
 		int seg;
 };
-/*ostream& operator <<(ostream& s, const Fecha& p){
-	//Muestra la fecha
-	s << "Fecha: " << p.dia << "/"<< p.mes << "/" <<p.anyo <<" ";
-	//Muestra la hora
-	if (p.hora<10){
-		s << "0" << p.hora <<":";
-	}else{s << p.hora << ":";}
-	//Muestra los minutos
-	if (p.min<10){
-		s << "0" << p.min <<":";
-	}else{s << p.min << ":";}
-	//Muestra los segundos
-	if (p.seg<10){
-		s << "0" << p.seg;
-	}else{s << p.seg;}
-
-	return s;
-}*/
-
 
 class InfDoc {
     friend ostream& operator<<(ostream& s, const InfDoc& p){
@@ -144,7 +124,7 @@ class InfDoc {
         const long int getIdDoc();
 		void setIdDoc(const long int &) ;
         const int getNumPal();
-		void setNumPal(const int &);
+		void setNumPal(const int &); 
         const int getNumPalSinParada();
 		void setNumPalSinParada(const int &);
         const int getNumPalDiferentes();

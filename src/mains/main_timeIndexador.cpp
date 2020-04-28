@@ -19,9 +19,14 @@ main() {
     long double aa=getcputime(); 
  
     IndexadorHash b("./StopWordsEspanyol.txt", ". ,:", false, false, "./indicePrueba", 0, false, true);
-    b.Indexar("listaFicheros.txt"); 
-    //b.IndexarDirectorio("./corpus");
-    //b.GuardarIndexacion();
+    //b.Indexar("listaFicheros.txt"); 
+    b.IndexarDirectorio("./corpusPruebas");
+    b.GuardarIndexacion();
+    IndexadorHash a("./indicePrueba");
+    a.GuardarIndexacion(); 
+    a.IndexarDirectorio("./corpusPruebas");
+    a.GuardarIndexacion(); 
+
  
     cout << "Ha tardado " << getcputime() - aa << " segundos" << endl; 
 } 

@@ -21,7 +21,10 @@ InfTermDoc& InfTermDoc::operator =(const InfTermDoc &itd){
     this->posTerm =itd.posTerm; 
     return *this;
 }
-const list<int>& InfTermDoc::getPosTerm(){return this->posTerm;}
+const list<int> &InfTermDoc::getPosTerm(){return this->posTerm;}
+void InfTermDoc::addPosTerm(const int &term ){
+    this->posTerm.push_back(term);
+}
 void InfTermDoc::setPosTerm(const list<int>& lista){this->posTerm = lista; }
 const int InfTermDoc::getFt(){return this->ft;}
 void InfTermDoc::setFt(const int& ft){this->ft = ft; }
@@ -61,7 +64,9 @@ InformacionTermino::~InformacionTermino(){
     this-> fd = 0; 
     l_docs.clear(); 
 }
-
+void InformacionTermino::addL_docs(const std::pair<long int , InfTermDoc > & doc){
+    this->l_docs.insert(doc);
+}
 const int InformacionTermino::getFtc(){return this->ftc; }
 void InformacionTermino::setFtc(const int & ftc){this->ftc = ftc; }
 const int InformacionTermino::getFt() {return this->ft;  }
